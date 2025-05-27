@@ -18,6 +18,7 @@ spec:
                 name: nav7-service
                 port:
                   number: 8080
+          
           - path: /
             pathType: Prefix
             backend:
