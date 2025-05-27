@@ -21,5 +21,5 @@ spec:
 
   tls:
     - hosts:
-        - sk036-tls.skala25a.project.skala-ai.com
+        - sk036-nav7.skala25a.project.skala-ai.com
       secretName: sk036-nav7-manual-tls-secret
