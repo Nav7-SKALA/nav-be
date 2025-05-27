@@ -5,7 +5,7 @@ metadata:
   namespace: skala-argocd
 spec:
   destination:
-    namespace: skala-practice
+    namespace: sk-team-07
     server: https://96BD83E8CE5CE0396D006BC5CEB350B0.gr7.ap-northeast-2.eks.amazonaws.com
   project: class-2
   source:
