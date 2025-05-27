@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nav7-ingress
+  namespace: skala-practice
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: public-nginx
+  rules:
+    - host: sk036-nav7.skala25a.project.skala-ai.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: nav7-service
+                port:
+                  number: 8080
+
+  tls:
+    - hosts:
+        - sk036-tls.skala25a.project.skala-ai.com
+      secretName: sk036-nav7-manual-tls-secret
