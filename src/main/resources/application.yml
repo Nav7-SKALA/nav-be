@@ -8,7 +8,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
+springdoc:
+  swagger-ui:
+    path: /swagger
 ---
 spring:
   config:
@@ -19,6 +21,13 @@ spring:
     username: nav7
     password: nav71234
     driver-class-name: org.postgresql.Driver
+  data:
+    mongodb:
+      uri: mongodb://nav7:nav71234@localhost:27017/navmongodb
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
 
 ---
 spring:
@@ -26,7 +35,15 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: ${DB_URL}
+    url: ${POSTGRE_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+  data:
+    mongodb:
+      uri: ${MONGO_URI}
+    redis:
+      host: ${REDIS_URI}
+      port: 6379
+      password: ${REDIS_PW}
+      database: 7
