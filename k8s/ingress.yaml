@@ -8,25 +8,31 @@ metadata:
 spec:
   ingressClassName: public-nginx
   rules:
-    - host: sk036-nav7.skala25a.project.skala-ai.com
+    - host: sk-nav7.skala25a.project.skala-ai.com
       http:
         paths:
           - path: /api
             pathType: Prefix
             backend:
               service:
-                name: nav7-service
+                name: nav7-be-service
                 port:
                   number: 8080
-
+          - path: /apis
+            pathType: Prefix
+            backend:
+              service:
+                name: nav7-ai-service
+                port:
+                  number: 8000
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: nav7-service
+                name: nav7-be-service
                 port:
                   number: 8080
   tls:
     - hosts:
-        - sk036-nav7.skala25a.project.skala-ai.com
-      secretName: sk036-nav7-manual-tls-secret
+        - sk-nav7.skala25a.project.skala-ai.com
+      secretName: sk-nav7-manual-tls-secret
