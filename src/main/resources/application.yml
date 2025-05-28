@@ -25,7 +25,9 @@ spring:
     driver-class-name: org.postgresql.Driver
   data:
     mongodb:
-      uri: mongodb://nav7:nav71234@localhost:27017/navmongodb
+      host: localhost
+      port: 27017
+      database: navmongodb
     redis:
       host: localhost
       port: 6379
