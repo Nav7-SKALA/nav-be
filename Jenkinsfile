@@ -8,7 +8,7 @@ pipeline {
         GIT_USER_NAME = 'chaerish' // GitHub 사용자 이름
         GIT_USER_EMAIL = 'ccyy8432@naver.com'
         IMAGE_REGISTRY = 'amdp-registry.skala-ai.com/skala25a'
-        IMAGE_NAME = 'sk036-nav7-be'
+        IMAGE_NAME = 'sk-nav7-be'
         IMAGE_TAG = '1.0.0'
         DOCKER_CREDENTIAL_ID = 'skala-image-registry-id'
     }
