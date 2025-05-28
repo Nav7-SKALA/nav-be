@@ -18,7 +18,7 @@ spec:
         app: nav7-backend
     spec:
       containers:
-        - name: nav7
+        - name: nav7-be
           image: amdp-registry.skala-ai.com/skala25a/sk-nav7-be:1.0.0-7-0b64bc0debd3
           ports:
             - containerPort: 8080
@@ -50,7 +50,6 @@ spec:
                 secretKeyRef:
                   name: nav-be-secret
                   key: REDIS_URI
-
             - name: SPRING_DATA_REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
