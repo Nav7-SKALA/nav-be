@@ -10,7 +10,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 springdoc:
   swagger-ui:
-    path: /swagger
+    path: /swagger/swagger-ui
 ---
 spring:
   config:
