@@ -11,13 +11,6 @@ spec:
     - host: sk-nav7.skala25a.project.skala-ai.com
       http:
         paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: nav7-be-service
-                port:
-                  number: 8080
           - path: /apis
             pathType: Prefix
             backend:
@@ -25,6 +18,13 @@ spec:
                 name: nav7-ai-service
                 port:
                   number: 8000
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: nav7-be-service
+                port:
+                  number: 8080
           - path: /swagger
             pathType: Prefix
             backend:
@@ -32,7 +32,6 @@ spec:
                 name: nav7-be-service
                 port:
                   number: 8080
-
           - path: /
             pathType: Prefix
             backend:
