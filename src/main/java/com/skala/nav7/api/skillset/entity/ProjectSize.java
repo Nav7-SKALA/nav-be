@@ -4,8 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum ProjectSize {
+    NULL("없음"),
     SMALL("소형"),
     MEDIUM_SMALL("중소형"),
+    MEDIUM("중형"),
     LARGE("대형"),
     EXTRA_LARGE("초대형");
 
