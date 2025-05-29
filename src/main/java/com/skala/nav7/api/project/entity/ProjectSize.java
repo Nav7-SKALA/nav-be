@@ -1,4 +1,4 @@
-package com.skala.nav7.api.skillset.entity;
+package com.skala.nav7.api.project.entity;
 
 import lombok.Getter;
 

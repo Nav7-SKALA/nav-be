@@ -1,7 +1,7 @@
 package com.skala.nav7.api.project.entity;
 
 import com.skala.nav7.api.profile.entity.Profile;
-import com.skala.nav7.api.skillset.entity.ProjectSize;
+import com.skala.nav7.api.skillset.entity.SkillCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -57,7 +57,7 @@ public class MemberProject {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "project_size", nullable = false)
-    ProjectSize projectSize;
+    SkillCode skillCode;
 
     @Column(name = "isTurningPoint", nullable = false)
     Integer isTurningPoint;

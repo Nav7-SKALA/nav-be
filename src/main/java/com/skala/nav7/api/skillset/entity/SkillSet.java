@@ -36,4 +36,5 @@ public class SkillSet extends SoftDeletableEntity {
 
     @Column(name = "skill_set_name", nullable = false)
     String skillSetName;
+    
 }
