@@ -26,6 +26,6 @@ public class SessionMessage {
     String sessionId;     // PostgreSQL의 UUID 기반 세션 ID
     LocalDateTime createdAt;
     LocalDateTime lastActiveAt;
-    String sender;
-    String content;
+    String question;
+    String answer;
 }
