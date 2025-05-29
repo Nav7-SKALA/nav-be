@@ -32,6 +32,13 @@ spec:
                 name: nav7-be-service
                 port:
                   number: 8080
+          - path: /docs
+            pathType: Prefix
+            backend:
+              service:
+                name: nav7-ai-service
+                port:
+                  number: 8000
           - path: /
             pathType: Prefix
             backend:
