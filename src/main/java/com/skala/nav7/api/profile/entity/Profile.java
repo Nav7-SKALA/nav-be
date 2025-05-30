@@ -39,4 +39,6 @@ public class Profile extends SoftDeletableEntity {
     Integer careerYear;
     @Column(name = "profile_img")
     String profileImage;
+    @Column(name = "career_title")
+    String careerTitle;
 }
