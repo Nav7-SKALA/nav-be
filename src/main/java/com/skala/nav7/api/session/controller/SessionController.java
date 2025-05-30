@@ -5,7 +5,10 @@ import com.skala.nav7.api.session.dto.request.SessionMessageRequestDTO;
 import com.skala.nav7.api.session.dto.request.SessionRequestDTO;
 import com.skala.nav7.api.session.dto.response.SessionMessageResponseDTO;
 import com.skala.nav7.api.session.dto.response.SessionResponseDTO;
+import com.skala.nav7.api.session.exception.SessionSuccessCode;
+import com.skala.nav7.api.session.service.SessionService;
 import com.skala.nav7.global.apiPayload.ApiResponse;
+import com.skala.nav7.global.base.DummyMemberInitializer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/sessions")
 @Tag(name = "Session 관련 API", description = "Session, Session Message 관련 API 입니다.")
 public class SessionController {
+    private final SessionService sessionService;
+    private final DummyMemberInitializer dummyMemberInitializer;
 
     @Operation(
             summary = "Session 생성",
@@ -36,7 +41,8 @@ public class SessionController {
     public ApiResponse<SessionResponseDTO.newSessionDTO> createNewSession(
             @RequestBody SessionRequestDTO.newSessionDTO request
     ) {
-        return ApiResponse.onSuccess(SessionConverter.to(UUID.randomUUID(), "안녕하세요 반갑습니다^^"));
+        return ApiResponse.onSuccess(
+                sessionService.createNewSessions(dummyMemberInitializer.getDummyMember(), request));
     }
 
     @Operation(
@@ -44,7 +50,7 @@ public class SessionController {
             description = "회원의 Session History 전체 목록을 조회합니다."
     )
     @GetMapping(value = "")
-    public ApiResponse<SessionResponseDTO.newSessionDTO> getSessionHistories(
+    public ApiResponse<SessionResponseDTO.SessionListDTO> getSessionHistories(
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             LocalDateTime cursorAt,
@@ -53,25 +59,22 @@ public class SessionController {
             @RequestParam(defaultValue = "10")
             int size
     ) {
-//        if (cursorAt == null || cursorId == null) {
-//            // 첫 요청 → 최신순 정렬
-//            return sessionRepository.findTopNByMemberOrderByLastActiveAtDescIdDesc(memberId, size);
-//        } else {
-//            // 커서 기반 페이징
-//            return sessionRepository.findByCursor(memberId, cursorAt, cursorId, size);
-//        }
-        return ApiResponse.onSuccess(SessionConverter.to(UUID.randomUUID(), "안녕하세요 반갑습니다^^"));
+        sessionService.getSessionList(dummyMemberInitializer.getDummyMember(), cursorAt, cursorId, size);
+        return ApiResponse.onSuccess(SessionConverter.to(
+                sessionService.getSessionList(dummyMemberInitializer.getDummyMember(), cursorAt, cursorId, size)));
     }
 
     @Operation(
             summary = "새로운 Session 메세지 생성",
             description = "세션에 관한 메세지를 보낼 때 사용하는 API 입니다."
     )
-    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{sessionId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<SessionMessageResponseDTO.newMessageDTO> createNewSession(
-            @RequestBody SessionMessageRequestDTO.newMessageDTO request
+            @Parameter(description = "세션의 UUID") @PathVariable UUID sessionId,
+            @Parameter(description = "사용자의 질문") @RequestBody SessionMessageRequestDTO.newMessageDTO request
     ) {
-        return ApiResponse.onSuccess(SessionConverter.toMessage(UUID.randomUUID(), "안녕하세요 반갑습니다^^"));
+        return ApiResponse.onSuccess(
+                sessionService.createNewMessage(dummyMemberInitializer.getDummyMember(), sessionId, request));
     }
 
     @Operation(
@@ -86,7 +89,8 @@ public class SessionController {
             @Parameter(description = "한 번에 가져올 메시지 수")
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ApiResponse.onSuccess("");
+        return ApiResponse.onSuccess(sessionService.getSessionMessageList(dummyMemberInitializer.getDummyMember(),
+                sessionId, cursor, size));
     }
 
     @Operation(
@@ -95,10 +99,9 @@ public class SessionController {
     )
     @PostMapping(value = "/delete/{sessionId}")
     public ApiResponse<?> deleteSession(
-            @Parameter(description = "삭제할 세션의 UUID") @PathVariable Long sessionId
+            @Parameter(description = "삭제할 세션의 UUID") @PathVariable UUID sessionId
     ) {
-        return ApiResponse.onSuccess("삭제가 완료되었습니다.");
+        sessionService.deleteSession(dummyMemberInitializer.getDummyMember(), sessionId);
+        return ApiResponse.onSuccess(SessionSuccessCode.SESSION_NO_CONTENT);
     }
-
-
 }
