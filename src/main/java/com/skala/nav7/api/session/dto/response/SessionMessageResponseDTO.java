@@ -24,8 +24,6 @@ public record SessionMessageResponseDTO(
             String sessionTitle,
             @Schema(description = "세션 생성 시각", example = "2025-05-28T10:00:00")
             LocalDateTime createdAt,
-            @Schema(description = "세션 마지막 활동 시각", example = "2025-05-28T11:00:00")
-            LocalDateTime lastActiveAt,
             @Schema(description = "조회된 메시지 목록")
             List<SessionMessageDTO> messages,
             @Schema(description = "다음 페이지 존재 여부", example = "true")
