@@ -1,0 +1,25 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: ${POSTGRE_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  data:
+    mongodb:
+      uri: ${MONGO_URI}
+    redis:
+      host: ${REDIS_URI}
+      port: 6379
+      password: ${REDIS_PW}
+      database: 7
+
+Jwt:
+  secret: ${JWT_SECRET_KEY}
+  token:
+    access-expiration-time: ${JWT_ACCESS_EXPIRATION_TIME}
+    refresh-expiration-time: ${JWT_REFRESH_EXPIRATION_TIME}
