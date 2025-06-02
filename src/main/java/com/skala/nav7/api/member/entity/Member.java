@@ -29,13 +29,13 @@ public class Member extends SoftDeletableEntity {
     @Column(name = "member_id", nullable = false)
     Long id;
 
-    @Column(name = "login_id", nullable = false, length = 12)
+    @Column(name = "login_id", nullable = false, length = 12, unique = true)
     String loginId;
 
-    @Column(name = "password", nullable = false, length = 16)
+    @Column(name = "password", nullable = false)
     String password;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     String email;
 
     @Enumerated(EnumType.STRING)
