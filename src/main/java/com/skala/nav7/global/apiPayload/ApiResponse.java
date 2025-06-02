@@ -30,6 +30,15 @@ public class ApiResponse<T> {
                 .build();
     }
 
+    public static <T> ApiResponse<T> onSuccess(BaseCode code) {
+        ReasonDTO dto = code.getReasonHttpStatus();
+        return ApiResponse.<T>builder()
+                .isSuccess(true)
+                .code(dto.getCode())
+                .message(dto.getMessage())
+                .build();
+    }
+
     public static <T> ApiResponse<T> of(BaseCode code, T result) {
         return ApiResponse.<T>builder()
                 .isSuccess(true)
