@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>NAV 이메일 인증</title>
+</head>
+<body>
+<div style="max-width: 600px; margin: 50px auto; padding: 40px; border: 1px solid #e0e0e0; border-radius: 10px; font-family: 'Arial', sans-serif; background-color: #ffffff;">
+    <h2 style="color: #2C3E50;">👋 NAV 회원가입을 환영합니다!</h2>
+    <p style="font-size: 16px; color: #555;">아래 인증번호를 입력하여 이메일 인증을 완료해 주세요.</p>
+
+    <div style="margin: 30px 0; padding: 20px; background-color: #f7f7f7; text-align: center; border-radius: 6px;">
+        <span style="font-size: 28px; font-weight: bold; letter-spacing: 4px; color: #2C3E50;"
+              th:text="${code}">123456</span>
+    </div>
+
+    <p style="font-size: 14px; color: #888;">
+        인증번호는 <strong>3분</strong>간 유효합니다.<br>
+        만료된 경우, 다시 인증 요청을 해주세요.
+    </p>
+
+    <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+
+    <p style="font-size: 12px; color: #aaa;">
+        본 메일은 NAV 회원가입을 위해 발송된 자동 메일입니다.<br>
+        문의사항은 support@nav.com 으로 연락 주세요.
+    </p>
+</div>
+</body>
+</html>
