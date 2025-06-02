@@ -50,7 +50,7 @@ public class EmailSenderService {
     public String setVerificationContext(String code) {
         Context context = new Context();
         context.setVariable("code", code);
-        return templateEngine.process("email-verification", context);
+        return templateEngine.process("mail", context);
     }
 
     private static void handleEmailError(MessagingException e, Throwable cause) {
