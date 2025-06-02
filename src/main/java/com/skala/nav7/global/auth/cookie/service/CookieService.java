@@ -6,6 +6,7 @@ import com.skala.nav7.global.auth.jwt.error.JWTErrorCode;
 import com.skala.nav7.global.auth.jwt.error.JWTException;
 import com.skala.nav7.global.auth.jwt.provider.JWTProvider;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,18 @@ public class CookieService {
                 .domain(AuthConstant.LOCAL_DOMAIN_URL.getValue())
                 .maxAge(jwtProvider.getExpiredIn(token))
                 .build();
+    }
+
+    public Cookie logoutCookie(HttpServletRequest request, AuthConstant type) {
+        Cookie cookie = findCookie(request.getCookies(), type.getValue());
+        setCookieClean(cookie);
+        return cookie;
+    }
+
+    private void setCookieClean(Cookie cookie) {
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
     }
 
 }
