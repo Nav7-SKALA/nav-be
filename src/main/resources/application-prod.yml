@@ -24,9 +24,11 @@ spring:
     password: ${GOOGLE_EMAIL_PW}
     properties:
       mail.smtp.debug: true
-      mail.smtp.connectiontimeout: 1000 #1초
-      mail.starttls.enable: true
       mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.connectiontimeout: 1000
+      mail.smtp.timeout: 5000
+      mail.smtp.writetimeout: 5000
 
 Jwt:
   secret: ${JWT_SECRET_KEY}
