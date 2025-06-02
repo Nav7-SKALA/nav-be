@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum CookieErrorCode implements BaseErrorCode {
-    REFRESH_TOKEN_MISSING(HttpStatus.BAD_REQUEST, "TOKEN4005", "쿠키에 리프레쉬 토큰이 존재하지 않습니다.");
+    ACCESS_TOKEN_MISSING(HttpStatus.BAD_REQUEST, "ACCESS_TOKEN400", "쿠키에 엑세스 토큰이 존재하지 않습니다."),
+    REFRESH_TOKEN_MISSING(HttpStatus.BAD_REQUEST, "REFRESH_TOKEN400", "쿠키에 리프레쉬 토큰이 존재하지 않습니다.");
     private final HttpStatus status;
     private final String code;
     private final String message;
