@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum AuthErrorCode implements BaseErrorCode {
+    MEMBER_INFO_NOT_FOUNT(HttpStatus.NOT_FOUND, "MEMBER404", "회원 정보가 존재하지 않습니다."),
     AUTH_INFO_NOT_FOUND(HttpStatus.UNAUTHORIZED, "AUTH_401", "회원 인증 정보가 존재하지 않습니다."),
     PASSWORD_INVALID(HttpStatus.BAD_REQUEST, "AUTH_PASSWORD400", "비밀번호가 맞지 않습니다."),
     LOGIN_ID_INVALID(HttpStatus.NOT_FOUND, "AUTH_LOGIN404", "존재하지 않는 아이디입니다."),

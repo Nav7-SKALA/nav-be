@@ -29,7 +29,7 @@ public class CookieService {
             }
             return findCookie;
         } catch (Exception e) {
-            throw new JWTException(JWTErrorCode.HEADER_NO_TOKEN);
+            throw new JWTException(JWTErrorCode.COOKIE_NO_TOKEN);
         }
     }
 

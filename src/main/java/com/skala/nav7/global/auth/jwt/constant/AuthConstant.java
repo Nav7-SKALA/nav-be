@@ -1,6 +1,8 @@
 package com.skala.nav7.global.auth.jwt.constant;
 
 public enum AuthConstant {
+    ROLE("role"),
+    ID("id"),
     COOKIE_HEADER("Set-Cookie"),
     LOCAL_DOMAIN_URL("localhost"),
     PROD_DOMAIN_URL("sk-nav7.skala25a.project.skala-ai.com"),
