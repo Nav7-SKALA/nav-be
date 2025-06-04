@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,8 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "job")
 public class Job extends SoftDeletableEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "job_seq")
+    @SequenceGenerator(name = "job_seq", sequenceName = "job_seq", allocationSize = 1)
     @Column(name = "job_id")
     Long id;
 

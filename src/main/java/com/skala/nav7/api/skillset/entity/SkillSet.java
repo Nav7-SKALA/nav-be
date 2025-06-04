@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,8 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "skill_set")
 public class SkillSet extends SoftDeletableEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "skill_set_seq")
+    @SequenceGenerator(name = "skill_set_seq", sequenceName = "skill_set_seq", allocationSize = 1)
     @Column(name = "skillset_id")
     Long id;
 
@@ -36,5 +38,5 @@ public class SkillSet extends SoftDeletableEntity {
 
     @Column(name = "skill_set_name", nullable = false)
     String skillSetName;
-    
+
 }

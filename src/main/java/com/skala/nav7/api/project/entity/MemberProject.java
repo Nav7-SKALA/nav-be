@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.AccessLevel;
@@ -31,7 +32,8 @@ import lombok.experimental.FieldDefaults;
 public class MemberProject {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_project_seq")
+    @SequenceGenerator(name = "member_project_seq", sequenceName = "member_project_seq", allocationSize = 1)
     @Column(name = "memberproject_id")
     Long id;
 
