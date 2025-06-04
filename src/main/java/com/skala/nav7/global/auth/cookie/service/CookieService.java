@@ -61,7 +61,7 @@ public class CookieService {
                 .path("/")
                 .sameSite("None")
                 .httpOnly(true)
-                .secure(false) // 실제 운영환경이면 true
+                .secure(true)
                 .maxAge(0)
                 .build();
         response.addHeader(AuthConstant.COOKIE_HEADER.getValue(), deleteCookie.toString());
