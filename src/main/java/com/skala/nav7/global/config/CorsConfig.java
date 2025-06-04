@@ -12,7 +12,8 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(
-                List.of("https://localhost:3000", "https://sk-nav7.skala25a.project.skala-ai.com"));
+                List.of("https://localhost:3000", "https://sk-nav7.skala25a.project.skala-ai.com",
+                        "http://locahost:8080"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
