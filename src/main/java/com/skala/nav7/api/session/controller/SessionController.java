@@ -1,5 +1,6 @@
 package com.skala.nav7.api.session.controller;
 
+import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.session.converter.SessionConverter;
 import com.skala.nav7.api.session.dto.request.SessionMessageRequestDTO;
 import com.skala.nav7.api.session.dto.request.SessionRequestDTO;
@@ -8,6 +9,7 @@ import com.skala.nav7.api.session.dto.response.SessionResponseDTO;
 import com.skala.nav7.api.session.exception.SessionSuccessCode;
 import com.skala.nav7.api.session.service.SessionService;
 import com.skala.nav7.global.apiPayload.ApiResponse;
+import com.skala.nav7.global.auth.jwt.annotation.MemberEntity;
 import com.skala.nav7.global.base.DummyMemberInitializer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -51,6 +53,7 @@ public class SessionController {
     )
     @GetMapping(value = "")
     public ApiResponse<SessionResponseDTO.SessionListDTO> getSessionHistories(
+            @MemberEntity Member member,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             LocalDateTime cursorAt,
@@ -59,9 +62,8 @@ public class SessionController {
             @RequestParam(defaultValue = "10")
             int size
     ) {
-        sessionService.getSessionList(dummyMemberInitializer.getDummyMember(), cursorAt, cursorId, size);
         return ApiResponse.onSuccess(SessionConverter.to(
-                sessionService.getSessionList(dummyMemberInitializer.getDummyMember(), cursorAt, cursorId, size)));
+                sessionService.getSessionList(member, cursorAt, cursorId, size)));
     }
 
     @Operation(
