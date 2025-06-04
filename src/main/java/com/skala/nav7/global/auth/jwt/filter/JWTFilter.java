@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,19 +30,13 @@ public class JWTFilter extends OncePerRequestFilter {
     private final CookieService cookieService;
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private static final String[] allowURI = {
+            "/api/v1/health",
             "/swagger/**",
             "/v3/api-docs/**",
             "/swagger-resources/**",
             "/favicon.ico",
             "/api/v1/auth/**"
     };
-//    private static final String[] allowURI = {
-//            "/", "/swagger/swagger-ui/**", "/swagger/swagger-ui/index.html",
-//            "/swagger/swagger-docs/**",
-//            "/api/v1/auth/login", "/api/v1/auth/signup",
-//            "/api/v1/auth/email/**", "/api/v1/auth/duplicate-email",
-//            "/api/v1/auth/duplicate-loginId"
-//    };
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -58,17 +53,41 @@ public class JWTFilter extends OncePerRequestFilter {
             throws CookieException, IOException, ServletException {
         try {
             Cookie cookie = getAccessTokenFromCookie(request);
-            if (cookie.getValue() == null || cookie.getValue().isBlank()) {
+            if (cookie == null || cookie.getValue() == null || cookie.getValue().isBlank()) {
                 throw new CookieException(CookieErrorCode.ACCESS_TOKEN_MISSING);
             }
             String token = cookie.getValue();
             if (!jwtProvider.isExpired(token)) {
                 setAuthentication(token);
                 filterChain.doFilter(request, response);
+            } else {
+                Cookie refreshCookie = cookieService.findCookie(request.getCookies(),
+                        AuthConstant.REFRESH_TOKEN.getValue());
+                if (refreshCookie == null || refreshCookie.getValue() == null || refreshCookie.getValue().isBlank()) {
+                    throw new CookieException(CookieErrorCode.REFRESH_TOKEN_MISSING);
+                }
+                String refreshToken = refreshCookie.getValue();
+                reissueRefreshToken(request, response, filterChain, refreshToken);
+                filterChain.doFilter(request, response);
             }
         } catch (GeneralException e) {
             handleFilterError(response, e);
         }
+    }
+
+    private void reissueRefreshToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain,
+                                     String refreshToken) throws IOException, ServletException {
+        String id = jwtProvider.getUserId(refreshToken);
+        String newAccessToken = jwtProvider.createAccessToken(Long.valueOf(id));
+        Long longId = Long.parseLong(id);
+        setAuthentication(newAccessToken);
+//        cookieService.cleanCookie(response, AuthConstant.REFRESH_TOKEN);
+//        cookieService.cleanCookie(response, AuthConstant.ACCESS_TOKEN);
+        ResponseCookie newAccessCookie = cookieService.createCookie(AuthConstant.ACCESS_TOKEN.getValue(),
+                longId);
+        ResponseCookie newRefreshCookie = cookieService.createCookie(AuthConstant.REFRESH_TOKEN.getValue(), longId);
+        response.addHeader(AuthConstant.COOKIE_HEADER.getValue(), newAccessCookie.toString());
+        response.addHeader(AuthConstant.COOKIE_HEADER.getValue(), newRefreshCookie.toString());
     }
 
     private void setAuthentication(String token) {

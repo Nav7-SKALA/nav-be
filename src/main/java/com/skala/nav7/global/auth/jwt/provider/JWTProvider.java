@@ -87,7 +87,7 @@ public class JWTProvider {
         } catch (SecurityException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
             throw new JWTException(JWTErrorCode.TOKEN_INVALID);
         } catch (ExpiredJwtException e) {
-            throw new JWTException(JWTErrorCode.TOKEN_EXPIRED);
+            return true;
         }
     }
 

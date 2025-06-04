@@ -7,6 +7,7 @@ import com.skala.nav7.global.auth.jwt.error.JWTException;
 import com.skala.nav7.global.auth.jwt.provider.JWTProvider;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
@@ -43,9 +44,8 @@ public class CookieService {
         return ResponseCookie.from(type, token)
                 .path("/")
                 .sameSite("None")
-                .httpOnly(false)
+                .httpOnly(true)
                 .secure(true)
-                .domain(AuthConstant.LOCAL_DOMAIN_URL.getValue())
                 .maxAge(jwtProvider.getExpiredIn(token))
                 .build();
     }
@@ -54,6 +54,17 @@ public class CookieService {
         Cookie cookie = findCookie(request.getCookies(), type.getValue());
         setCookieClean(cookie);
         return cookie;
+    }
+
+    public void cleanCookie(HttpServletResponse response, AuthConstant type) {
+        ResponseCookie deleteCookie = ResponseCookie.from(type.getValue(), "")
+                .path("/")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(false) // 실제 운영환경이면 true
+                .maxAge(0)
+                .build();
+        response.addHeader(AuthConstant.COOKIE_HEADER.getValue(), deleteCookie.toString());
     }
 
     private void setCookieClean(Cookie cookie) {
