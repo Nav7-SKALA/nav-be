@@ -174,4 +174,5 @@ Temporary Items
 tls.crt
 tls.key
 secret.yaml
+/src/main/resources/application-local.yml
 # End of https://www.toptal.com/developers/gitignore/api/macos,java,intellij
