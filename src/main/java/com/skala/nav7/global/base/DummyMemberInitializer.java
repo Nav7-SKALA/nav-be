@@ -3,6 +3,8 @@ package com.skala.nav7.global.base;
 import com.skala.nav7.api.member.entity.Gender;
 import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.member.repository.MemberRepository;
+import com.skala.nav7.api.profile.entity.Profile;
+import com.skala.nav7.api.profile.repository.ProfileRepository;
 import com.skala.nav7.api.session.entity.Session;
 import com.skala.nav7.api.session.entity.SessionMessage;
 import com.skala.nav7.api.session.repository.SessionRepository;
@@ -19,6 +21,7 @@ public class DummyMemberInitializer {
     private final MongoTemplate mongoTemplate;
     private final MemberRepository memberRepository;
     private final SessionRepository sessionRepository;
+    private final ProfileRepository profileRepository;
     private Member dummyMember;
 
     @PostConstruct
@@ -34,6 +37,12 @@ public class DummyMemberInitializer {
                     .build();
             memberRepository.save(dummy);
             dummyMember = dummy;
+            Profile profile = Profile.builder()
+                    .member(dummyMember)
+                    .careerTitle("백엔드 개발자")
+                    .careerYear(2)
+                    .build();
+            profileRepository.save(profile);
             initSession();
         } else {
             dummyMember = memberRepository.findById(1L).get();
