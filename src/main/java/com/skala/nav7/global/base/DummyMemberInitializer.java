@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,17 +23,17 @@ public class DummyMemberInitializer {
     private final MemberRepository memberRepository;
     private final SessionRepository sessionRepository;
     private final ProfileRepository profileRepository;
+    private final PasswordEncoder passwordEncoder;
     private Member dummyMember;
 
     @PostConstruct
     public void init() {
         if (memberRepository.findById(1L).isEmpty()) {
             Member dummy = Member.builder()
-                    .id(1L)
                     .email("ccyy8432@naver.com")
                     .gender(Gender.FEMALE)
                     .loginId("testId")
-                    .password("test1234")
+                    .password(passwordEncoder.encode("test1234"))
                     .memberName("김더미")
                     .build();
             memberRepository.save(dummy);
