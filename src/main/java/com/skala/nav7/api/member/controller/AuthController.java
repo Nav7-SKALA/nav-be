@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1")
 @Tag(name = "AUTH 관련 API", description = "회원가입, 로그인 관련 API 입니다.")
 public class AuthController {
 
@@ -34,7 +34,7 @@ public class AuthController {
             summary = "회원가입",
             description = "아이디, 비밀번호, 이메일, 이름, 성별을 입력받아 회원가입을 진행합니다."
     )
-    @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/auth/signup", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<?>> signUp(
             @RequestBody AuthRequestDTO.SignUpRequestDTO request
     ) {
@@ -48,7 +48,7 @@ public class AuthController {
             summary = "로그인 아이디 중복 검사",
             description = "회원가입 시, 이미 존재하는 ID 인지 확인합니다."
     )
-    @PostMapping(value = "/duplicate-loginId")
+    @PostMapping(value = "/auth/duplicate-loginId")
     public ApiResponse<?> checkDuplicateId(
             @Parameter(description = "로그인 시 필요한 정보") @RequestBody @Valid @NotNull String loginId) {
         return ApiResponse.onSuccess(authService.checkDuplicateId(loginId));
@@ -58,7 +58,7 @@ public class AuthController {
             summary = "로그인 이메일 중복 검사",
             description = "회원가입 시, 이미 존재하는 Email 인지 확인합니다."
     )
-    @PostMapping(value = "/duplicate-email")
+    @PostMapping(value = "/auth/duplicate-email")
     public ApiResponse<?> checkDuplicateEmail(
             @Parameter(description = "이메일") @RequestBody @Valid @NotNull String email
     ) {
@@ -69,7 +69,7 @@ public class AuthController {
             summary = "로그인",
             description = "로그인을 진행합니다."
     )
-    @PostMapping(value = "/login")
+    @PostMapping(value = "/auth/login")
     public ResponseEntity<ApiResponse<?>> login(
             @Parameter(description = "로그인 시 필요한 아이디, 비밀번호") @RequestBody @Valid AuthRequestDTO.LoginRequestDTO dto,
             HttpServletResponse response) {
@@ -83,7 +83,7 @@ public class AuthController {
             summary = "로그아웃",
             description = "로그아웃을 진행합니다."
     )
-    @PostMapping(value = "/logout")
+    @PostMapping(value = "/member/logout")
     public ResponseEntity<ApiResponse<?>> logout(HttpServletResponse response, HttpServletRequest request) {
         loginService.logout(response, request);
         return ResponseEntity

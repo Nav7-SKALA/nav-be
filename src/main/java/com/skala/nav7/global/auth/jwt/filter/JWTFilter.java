@@ -20,20 +20,28 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
     private final JWTProvider jwtProvider;
     private final CookieService cookieService;
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private static final String[] allowURI = {
-            "/", "/swagger/swagger-ui/**", "/swagger/swagger-ui/index.html",
-            "/swagger/swagger-docs/**",
-            "/api/v1/auth/login", "/api/v1/auth/signup",
-            "/api/v1/auth/email/**", "/api/v1/auth/duplicate-email",
-            "/api/v1/auth/duplicate-loginId"
+            "/swagger/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/favicon.ico",
+            "/api/v1/auth/**"
     };
-
+//    private static final String[] allowURI = {
+//            "/", "/swagger/swagger-ui/**", "/swagger/swagger-ui/index.html",
+//            "/swagger/swagger-docs/**",
+//            "/api/v1/auth/login", "/api/v1/auth/signup",
+//            "/api/v1/auth/email/**", "/api/v1/auth/duplicate-email",
+//            "/api/v1/auth/duplicate-loginId"
+//    };
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -50,7 +58,6 @@ public class JWTFilter extends OncePerRequestFilter {
             throws CookieException, IOException, ServletException {
         try {
             Cookie cookie = getAccessTokenFromCookie(request);
-            System.out.println("cookie: " + cookie.getValue());
             if (cookie.getValue() == null || cookie.getValue().isBlank()) {
                 throw new CookieException(CookieErrorCode.ACCESS_TOKEN_MISSING);
             }
@@ -89,7 +96,8 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     private boolean canPassFilter(String request) {
-        return Arrays.stream(allowURI).allMatch(request::equals);
+        return Arrays.stream(allowURI)
+                .anyMatch(pattern -> pathMatcher.match(pattern, request));
     }
 
 
