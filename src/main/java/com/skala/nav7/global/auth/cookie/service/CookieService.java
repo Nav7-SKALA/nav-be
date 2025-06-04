@@ -42,7 +42,7 @@ public class CookieService {
         }
         return ResponseCookie.from(type, token)
                 .path("/")
-                .sameSite("LAX")
+                .sameSite("None")
                 .httpOnly(true)
                 .secure(false)
                 .maxAge(jwtProvider.getExpiredIn(token))
