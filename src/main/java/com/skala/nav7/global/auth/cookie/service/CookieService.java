@@ -43,9 +43,8 @@ public class CookieService {
         return ResponseCookie.from(type, token)
                 .path("/")
                 .sameSite("None")
-                .httpOnly(false)
-                .secure(true)
-                .domain(AuthConstant.LOCAL_DOMAIN_URL.getValue())
+                .httpOnly(true)
+                .secure(false)
                 .maxAge(jwtProvider.getExpiredIn(token))
                 .build();
     }
