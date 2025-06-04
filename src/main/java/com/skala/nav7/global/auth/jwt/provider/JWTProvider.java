@@ -59,8 +59,8 @@ public class JWTProvider {
         Instant issuedAt = Instant.now();
         Instant expiredAt = issuedAt.plusMillis(expiration);
         return Jwts.builder()
-                .claim("role", AuthConstant.ROLE_USER)
-                .claim("id", id)
+                .claim(AuthConstant.ROLE.getValue(), AuthConstant.ROLE_USER.getValue())
+                .claim(AuthConstant.ID.getValue(), String.valueOf(id))
                 .setIssuedAt(Date.from(issuedAt))
                 .setExpiration(Date.from(expiredAt))
                 .signWith(key)
@@ -100,11 +100,11 @@ public class JWTProvider {
     }
 
     public String getRole(String token) {
-        return getClaimsJws(token).getBody().get("role", String.class);
+        return getClaimsJws(token).getBody().get(AuthConstant.ROLE.getValue(), String.class);
     }
 
     public String getUserId(String token) {
-        return String.valueOf(getClaimsJws(token).getBody().get("id", Long.class));
+        return String.valueOf(getClaimsJws(token).getBody().get(AuthConstant.ID.getValue(), String.class));
     }
 
 

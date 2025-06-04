@@ -1,7 +1,6 @@
 package com.skala.nav7.global.config;
 
 
-import com.skala.nav7.api.member.service.LoginService;
 import com.skala.nav7.global.auth.cookie.service.CookieService;
 import com.skala.nav7.global.auth.jwt.filter.JWTFilter;
 import com.skala.nav7.global.auth.jwt.handler.JWTAccessDeniedHandler;
@@ -26,18 +25,19 @@ public class SecurityConfig {
     private final JWTProvider jwtProvider;
     private final JWTAccessDeniedHandler jwtAccessDeniedHandler;
     private final JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final LoginService loginService;
     private final CookieService cookieService;
     private final CorsConfig corsConfig;
     private final String[] allowURI = {
-            "/", "/swagger/**", "/v3/api-docs/**", "/swagger-ui.html", "/api/v1/auth/login",
-            "/api/v1/auth/signup", "/api/v1/auth/email/**", "/api/v1/auth/duplicate-email",
+            "/", "/swagger/swagger-ui/**", "/swagger/swagger-ui/index.html",
+            "/swagger/swagger-docs/**",
+            "/api/v1/auth/login", "/api/v1/auth/signup",
+            "/api/v1/auth/email/**", "/api/v1/auth/duplicate-email",
             "/api/v1/auth/duplicate-loginId"
     };
 
     @Bean
     public JWTFilter jwtFilter() {
-        return new JWTFilter(loginService, jwtProvider, cookieService);
+        return new JWTFilter(jwtProvider, cookieService);
     }
 
     @Bean
@@ -54,15 +54,15 @@ public class SecurityConfig {
                 .sessionManagement((session) -> session //세션 stateless 상태: 비활성화
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(allowURI)
-                        .permitAll()
+                        .requestMatchers(allowURI).permitAll()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(jwtAccessDeniedHandler)
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
-                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint));
         return http.build();
     }
+
 
 }

@@ -1,7 +1,6 @@
 package com.skala.nav7.global.auth.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skala.nav7.api.member.service.LoginService;
 import com.skala.nav7.global.apiPayload.ApiResponse;
 import com.skala.nav7.global.apiPayload.code.base.BaseErrorCode;
 import com.skala.nav7.global.auth.cookie.error.CookieErrorCode;
@@ -18,18 +17,23 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
-    private final LoginService loginService;
     private final JWTProvider jwtProvider;
     private final CookieService cookieService;
     private static final String[] allowURI = {
-            "/api/v1/auth/signup", "/api/v1/auth/email/**", "/api/v1/auth/duplicate-email",
+            "/", "/swagger/swagger-ui/**", "/swagger/swagger-ui/index.html",
+            "/swagger/swagger-docs/**",
+            "/api/v1/auth/login", "/api/v1/auth/signup",
+            "/api/v1/auth/email/**", "/api/v1/auth/duplicate-email",
             "/api/v1/auth/duplicate-loginId"
     };
-    
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -46,17 +50,25 @@ public class JWTFilter extends OncePerRequestFilter {
             throws CookieException, IOException, ServletException {
         try {
             Cookie cookie = getAccessTokenFromCookie(request);
-
-            if (cookie.getValue() != null) {
+            System.out.println("cookie: " + cookie.getValue());
+            if (cookie.getValue() == null || cookie.getValue().isBlank()) {
                 throw new CookieException(CookieErrorCode.ACCESS_TOKEN_MISSING);
             }
             String token = cookie.getValue();
-            jwtProvider.isExpired(token);
-            loginService.setAuthentication(token);
-            filterChain.doFilter(request, response);
+            if (!jwtProvider.isExpired(token)) {
+                setAuthentication(token);
+                filterChain.doFilter(request, response);
+            }
         } catch (GeneralException e) {
             handleFilterError(response, e);
         }
+    }
+
+    private void setAuthentication(String token) {
+        Authentication auth = jwtProvider.getAuthentication(token);
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(auth);
+        SecurityContextHolder.setContext(context);
     }
 
     private static void handleFilterError(HttpServletResponse response, GeneralException e) throws IOException {
@@ -77,7 +89,7 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     private boolean canPassFilter(String request) {
-        return Arrays.stream(allowURI).anyMatch(request::startsWith);
+        return Arrays.stream(allowURI).allMatch(request::equals);
     }
 
 
