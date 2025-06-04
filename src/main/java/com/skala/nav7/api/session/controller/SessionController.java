@@ -10,7 +10,6 @@ import com.skala.nav7.api.session.exception.SessionSuccessCode;
 import com.skala.nav7.api.session.service.SessionService;
 import com.skala.nav7.global.apiPayload.ApiResponse;
 import com.skala.nav7.global.auth.jwt.annotation.MemberEntity;
-import com.skala.nav7.global.base.DummyMemberInitializer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,7 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Session 관련 API", description = "Session, Session Message 관련 API 입니다.")
 public class SessionController {
     private final SessionService sessionService;
-    private final DummyMemberInitializer dummyMemberInitializer;
 
     @Operation(
             summary = "Session 생성",
@@ -41,10 +39,11 @@ public class SessionController {
     )
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<SessionResponseDTO.newSessionDTO> createNewSession(
+            @MemberEntity Member member,
             @RequestBody SessionRequestDTO.newSessionDTO request
     ) {
         return ApiResponse.onSuccess(
-                sessionService.createNewSessions(dummyMemberInitializer.getDummyMember(), request));
+                sessionService.createNewSessions(member, request));
     }
 
     @Operation(
@@ -72,11 +71,12 @@ public class SessionController {
     )
     @PostMapping(value = "/{sessionId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<SessionMessageResponseDTO.newMessageDTO> createNewSession(
+            @MemberEntity Member member,
             @Parameter(description = "세션의 UUID") @PathVariable UUID sessionId,
             @Parameter(description = "사용자의 질문") @RequestBody SessionMessageRequestDTO.newMessageDTO request
     ) {
         return ApiResponse.onSuccess(
-                sessionService.createNewMessage(dummyMemberInitializer.getDummyMember(), sessionId, request));
+                sessionService.createNewMessage(member, sessionId, request));
     }
 
     @Operation(
@@ -85,13 +85,14 @@ public class SessionController {
     )
     @GetMapping("/{sessionId}")
     public ApiResponse<?> getDetailSession(
+            @MemberEntity Member member,
             @Parameter(description = "세션 UUID") @PathVariable UUID sessionId,
             @Parameter(description = "마지막 메시지의 Mongo ObjectId (nextMessageId)")
             @RequestParam(required = false) String cursor,
             @Parameter(description = "한 번에 가져올 메시지 수")
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ApiResponse.onSuccess(sessionService.getSessionMessageList(dummyMemberInitializer.getDummyMember(),
+        return ApiResponse.onSuccess(sessionService.getSessionMessageList(member,
                 sessionId, cursor, size));
     }
 
@@ -101,9 +102,10 @@ public class SessionController {
     )
     @PostMapping(value = "/delete/{sessionId}")
     public ApiResponse<?> deleteSession(
+            @MemberEntity Member member,
             @Parameter(description = "삭제할 세션의 UUID") @PathVariable UUID sessionId
     ) {
-        sessionService.deleteSession(dummyMemberInitializer.getDummyMember(), sessionId);
+        sessionService.deleteSession(member, sessionId);
         return ApiResponse.onSuccess(SessionSuccessCode.SESSION_NO_CONTENT);
     }
 }
