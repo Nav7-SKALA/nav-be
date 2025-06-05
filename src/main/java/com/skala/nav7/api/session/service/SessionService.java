@@ -138,7 +138,7 @@ public class SessionService {
         if (cursor != null && !cursor.isEmpty()) {
             query.addCriteria(Criteria.where("_id").gt(new ObjectId(cursor)));
         }
-        query.with(Sort.by(Direction.ASC, "_id")); //_id 오름차순 필터링
+        query.with(Sort.by(Direction.DESC, "_id")); //_id 오름차순 필터링
         query.limit(size + 1); //조회 갯수 제한
         List<SessionMessage> messages = mongoTemplate.find(query, SessionMessage.class);
 
