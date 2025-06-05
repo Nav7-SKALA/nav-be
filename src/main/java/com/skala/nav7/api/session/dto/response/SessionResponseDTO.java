@@ -30,7 +30,7 @@ public record SessionResponseDTO(
                             }
                             """
             )
-            HashMap<String, String> map
+            HashMap<String, Object> map
     ) {
     }
 

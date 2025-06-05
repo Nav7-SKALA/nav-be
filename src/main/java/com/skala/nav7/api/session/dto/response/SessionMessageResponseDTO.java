@@ -27,7 +27,7 @@ public record SessionMessageResponseDTO(
                             }
                             """
             )
-            HashMap<String, String> map
+            HashMap<String, Object> map
     ) {
     }
 
