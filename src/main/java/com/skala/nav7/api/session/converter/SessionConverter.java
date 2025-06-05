@@ -5,21 +5,22 @@ import com.skala.nav7.api.session.dto.response.SessionResponseDTO;
 import com.skala.nav7.api.session.entity.Session;
 import com.skala.nav7.api.session.entity.SessionMessage;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Slice;
 
 public class SessionConverter {
-    public static SessionResponseDTO.newSessionDTO to(UUID sessionId, String answer) {
+    public static SessionResponseDTO.newSessionDTO to(UUID sessionId, HashMap<String, String> map) {
         return SessionResponseDTO.newSessionDTO.builder()
-                .answer(answer)
+                .map(map)
                 .sessionId(sessionId)
                 .build();
     }
 
-    public static SessionMessageResponseDTO.newMessageDTO toMessage(UUID sessionId, String answer) {
+    public static SessionMessageResponseDTO.newMessageDTO toMessage(UUID sessionId, HashMap<String, String> map) {
         return SessionMessageResponseDTO.newMessageDTO.builder()
-                .answer(answer)
+                .map(map)
                 .sessionId(sessionId)
                 .build();
     }

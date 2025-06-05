@@ -23,15 +23,15 @@ public class FastApiClientService {
     private final static String GENERAL_CHAT_URL = "/career-path";
     private final static String CAREER_TITLE_URL = "/career-title";
 
-    public FastAPIResponseDTO.CareerResponseDTO askCareerPath(Long profileId, String question) {
+    public FastAPIResponseDTO askCareerPath(Long profileId, String question, String sessionId) {
         try {
             return fastApiWebClient.post()
                     .uri(GENERAL_CHAT_URL)
-                    .bodyValue(FastAPIRequestDTO.CareerPathRequestDTO.of(profileId, question))
+                    .bodyValue(FastAPIRequestDTO.CareerPathRequestDTO.of(profileId, question, sessionId))
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, this::handleError)
-                    .bodyToMono(FastAPIResponseDTO.CareerResponseDTO.class)
-                    .doOnError(e -> log.error("FAST API ERROR: {} ", e.getMessage()))
+                    .bodyToMono(FastAPIResponseDTO.class)
+                    .doOnError(e -> log.error("FAST API ERROR", e))
                     .block();
         } catch (Exception e) {
             throw new FastAPIException(FastAPIErrorCode.FAST_API_ERROR);
