@@ -2,6 +2,8 @@ package com.skala.nav7.api.session.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skala.nav7.api.session.dto.request.FastAPIRequestDTO;
+import com.skala.nav7.api.session.dto.response.FastAPIResponseDTO;
 import com.skala.nav7.api.session.exception.FastAPIErrorCode;
 import com.skala.nav7.api.session.exception.FastAPIException;
 import java.util.Map;
@@ -19,12 +21,28 @@ import reactor.core.publisher.Mono;
 public class FastApiClientService {
     private final WebClient fastApiWebClient;
     private final static String GENERAL_CHAT_URL = "/career-path";
+    private final static String CAREER_TITLE_URL = "/career-title";
 
-    public String askCareerPath(String question) {
+    public FastAPIResponseDTO.CareerResponseDTO askCareerPath(Long profileId, String question) {
         try {
             return fastApiWebClient.post()
                     .uri(GENERAL_CHAT_URL)
-                    .bodyValue(Map.of("question", question))
+                    .bodyValue(FastAPIRequestDTO.CareerPathRequestDTO.of(profileId, question))
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, this::handleError)
+                    .bodyToMono(FastAPIResponseDTO.CareerResponseDTO.class)
+                    .doOnError(e -> log.error("FAST API ERROR: {} ", e.getMessage()))
+                    .block();
+        } catch (Exception e) {
+            throw new FastAPIException(FastAPIErrorCode.FAST_API_ERROR);
+        }
+    }
+
+    public String askCareerTitle(Long profileId) { //todo: profile API 구현 후 수정
+        try {
+            return fastApiWebClient.post()
+                    .uri(CAREER_TITLE_URL)
+                    .bodyValue(Map.of("id", profileId))
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, this::handleError)
                     .bodyToMono(String.class)
