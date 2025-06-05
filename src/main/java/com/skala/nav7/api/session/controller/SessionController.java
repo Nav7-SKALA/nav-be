@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +36,7 @@ public class SessionController {
             summary = "Session 생성",
             description = "새로운 세션, 즉 첫 메세지를 보낼 때 사용하는 API 입니다."
     )
-    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "")
     public ApiResponse<SessionResponseDTO.newSessionDTO> createNewSession(
             @MemberEntity Member member,
             @RequestBody SessionRequestDTO.newSessionDTO request
@@ -69,7 +68,7 @@ public class SessionController {
             summary = "새로운 Session 메세지 생성",
             description = "세션에 관한 메세지를 보낼 때 사용하는 API 입니다."
     )
-    @PostMapping(value = "/{sessionId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{sessionId}")
     public ApiResponse<SessionMessageResponseDTO.newMessageDTO> createNewSession(
             @MemberEntity Member member,
             @Parameter(description = "세션의 UUID") @PathVariable UUID sessionId,
