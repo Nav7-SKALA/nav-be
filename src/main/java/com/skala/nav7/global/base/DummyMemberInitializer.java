@@ -5,11 +5,14 @@ import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.member.repository.MemberRepository;
 import com.skala.nav7.api.profile.entity.Profile;
 import com.skala.nav7.api.profile.repository.ProfileRepository;
+import com.skala.nav7.api.project.entity.Domain;
+import com.skala.nav7.api.project.repository.DomainRepository;
 import com.skala.nav7.api.session.entity.Session;
 import com.skala.nav7.api.session.entity.SessionMessage;
 import com.skala.nav7.api.session.repository.SessionRepository;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DummyMemberInitializer {
+    private final DomainRepository domainRepository;
     private final MongoTemplate mongoTemplate;
     private final MemberRepository memberRepository;
     private final SessionRepository sessionRepository;
@@ -46,6 +50,7 @@ public class DummyMemberInitializer {
             profileRepository.save(profile);
             initSession();
         } else {
+            initDomain();
             dummyMember = memberRepository.findById(1L).get();
         }
     }
@@ -93,6 +98,20 @@ public class DummyMemberInitializer {
 
         mongoTemplate.insertAll(messages);
 
+    }
+
+    private void initDomain() {
+        List<String> domainNames = List.of(
+                "유통/물류/서비스", "제2금융", "(제조) 대외", "공공", "미디어/콘텐츠", "통신", "금융",
+                "(제조) 대내 Process", "공통", "Global", "(제조) 대내 Hi-Tech", "금융등", "대외 및 그룹사",
+                "제1금융", "의료", "물류", "보험", "은행", "SK그룹", "유통", "제조"
+        );
+
+        for (String name : new HashSet<>(domainNames)) {
+            if (!domainRepository.existsByDomainName(name)) {
+                domainRepository.save(Domain.builder().domainName(name).build());
+            }
+        }
     }
 
     public Member getDummyMember() {

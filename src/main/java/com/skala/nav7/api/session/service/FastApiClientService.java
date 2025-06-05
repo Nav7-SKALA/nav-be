@@ -27,7 +27,7 @@ public class FastApiClientService {
         try {
             return fastApiWebClient.post()
                     .uri(GENERAL_CHAT_URL)
-                    .bodyValue(FastAPIRequestDTO.CareerPathRequestDTO.of(profileId, question, sessionId))
+                    .bodyValue(FastAPIRequestDTO.CareerPathRequestDTO.of(profileId, sessionId, question))
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, this::handleError)
                     .bodyToMono(FastAPIResponseDTO.class)
