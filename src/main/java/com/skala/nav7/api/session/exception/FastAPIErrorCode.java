@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum FastAPIErrorCode implements BaseErrorCode {
+    RESPONSE_JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "FAST_API_JSON_500", "AI Agent 응답 파싱 중 오류가 발생했습니다."),
     FAST_API_ERROR(HttpStatus.BAD_REQUEST, "FAST_API_500", "AI Agent 응답 생성 중 오류가 발생했습니다."),
     ;
     private final HttpStatus status;
