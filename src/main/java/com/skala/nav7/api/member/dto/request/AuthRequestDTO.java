@@ -11,12 +11,12 @@ public record AuthRequestDTO(
     @Schema(description = "회원가입 요청 DTO")
     public record SignUpRequestDTO(
             @NotBlank(message = "로그인 ID는 필수입니다.")
-            @Schema(description = "로그인 ID", example = "naver123")
+            @Schema(description = "로그인 ID", example = "testId")
             String loginId,
 
             @NotBlank(message = "비밀번호는 필수입니다.")
             @Size(min = 8, message = "비밀번호는 최소 8자 이상이어야 합니다.")
-            @Schema(description = "비밀번호", example = "password1234")
+            @Schema(description = "비밀번호", example = "test1234")
             String password,
 
             @Email(message = "이메일 형식이 유효하지 않습니다.")

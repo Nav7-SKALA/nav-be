@@ -43,4 +43,16 @@ public class Profile extends SoftDeletableEntity {
     String profileImage;
     @Column(name = "career_title")
     String careerTitle;
+
+    public void editCareerYear(Integer careerYear) {
+        this.careerYear = careerYear;
+    }
+
+    public void editProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void editCareerTitle(String careerTitle) {
+        this.careerTitle = careerTitle;
+    }
 }
