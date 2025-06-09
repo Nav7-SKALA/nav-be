@@ -1,4 +1,4 @@
-package com.skala.nav7.api.project.entity;
+package com.skala.nav7.api.project.entity.domain;
 
 import com.skala.nav7.global.base.entity.SoftDeletableEntity;
 import jakarta.persistence.Column;
