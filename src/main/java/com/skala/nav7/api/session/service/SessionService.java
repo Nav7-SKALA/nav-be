@@ -46,6 +46,8 @@ public class SessionService {
     private final FastApiClientService fastApiClientService;
     private final MongoTemplate mongoTemplate;
     private final ObjectMapper objectMapper;
+    private static final String _ID = "_id";
+
     private static final String SESSION_ID = "sessionId";
     private static final String AGENT_ROLE_MODEL = "RoleModel";
     private static final String KEY_PROFILE_ID = "profileId_";
@@ -133,13 +135,12 @@ public class SessionService {
         Session session = getSession(sessionId);
         checkMemberAuth(member, session);
         Query query = new Query();
-        query.addCriteria(Criteria.where(SESSION_ID).is(sessionId.toString())); //해당 SessionId만 가져옴
-        //커서이후의 데이터만 필터링한다
+        query.addCriteria(Criteria.where(SESSION_ID).is(sessionId.toString()));
         if (cursor != null && !cursor.isEmpty()) {
-            query.addCriteria(Criteria.where("_id").gt(new ObjectId(cursor)));
+            query.addCriteria(Criteria.where(_ID).lt(new ObjectId(cursor))); // 핵심 수정
         }
-        query.with(Sort.by(Direction.DESC, "_id")); //_id 오름차순 필터링
-        query.limit(size + 1); //조회 갯수 제한
+        query.with(Sort.by(Direction.DESC, _ID)); // 최신 → 과거
+        query.limit(size + 1);
         List<SessionMessage> messages = mongoTemplate.find(query, SessionMessage.class);
 
         return SessionConverter.to(session, messages, size);
