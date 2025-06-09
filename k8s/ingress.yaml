@@ -39,6 +39,13 @@ spec:
                 name: nav7-fe-service
                 port:
                   number: 80
+          - path: /actuator
+            pathType: Prefix
+            backend:
+              service:
+                name: nav7-be-service
+                port:
+                  number: 8081
   tls:
     - hosts:
         - sk-nav7.skala25a.project.skala-ai.com

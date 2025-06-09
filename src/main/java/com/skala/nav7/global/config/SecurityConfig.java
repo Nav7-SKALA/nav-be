@@ -29,6 +29,7 @@ public class SecurityConfig {
     private final CorsConfig corsConfig;
     private final String[] allowURI = {
             "/", "/swagger/swagger-ui/**", "/swagger/swagger-ui/index.html",
+            "/actuator/**",
             "/swagger/swagger-docs/**",
             "/api/v1/auth/login", "/api/v1/auth/signup",
             "/api/v1/auth/email/**", "/api/v1/auth/duplicate-email",
