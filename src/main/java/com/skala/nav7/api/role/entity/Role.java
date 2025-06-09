@@ -1,4 +1,4 @@
-package com.skala.nav7.api.project.entity.role;
+package com.skala.nav7.api.role.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,5 +30,4 @@ public class Role {
 
     @Column(name = "role_name", nullable = false, unique = true)
     String roleName; // "PM", "개발자", "Application Architect" 등
-
 }
