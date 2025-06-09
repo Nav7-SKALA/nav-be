@@ -1,4 +1,4 @@
-package com.skala.nav7.api.project.entity.role;
+package com.skala.nav7.api.role.entity;
 
 import com.skala.nav7.api.project.entity.MemberProject;
 import jakarta.persistence.Column;
