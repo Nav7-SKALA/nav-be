@@ -11,9 +11,8 @@ import java.util.UUID;
 import org.springframework.data.domain.Slice;
 
 public class SessionConverter {
-    public static SessionResponseDTO.newSessionDTO to(UUID sessionId, HashMap<String, Object> map) {
+    public static SessionResponseDTO.newSessionDTO to(UUID sessionId) {
         return SessionResponseDTO.newSessionDTO.builder()
-                .map(map)
                 .sessionId(sessionId)
                 .build();
     }

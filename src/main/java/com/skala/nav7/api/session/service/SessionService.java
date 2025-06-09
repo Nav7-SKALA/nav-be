@@ -58,9 +58,7 @@ public class SessionService {
     public SessionResponseDTO.newSessionDTO createNewSessions(Member member, SessionRequestDTO.newSessionDTO dto) {
         Session session = Session.builder().member(member).sessionTitle(dto.question()).build();
         sessionRepository.save(session);
-        HashMap<String, Object> map = getSessionMessage(member.getId(), dto.question(),
-                String.valueOf(session.getId()));
-        return SessionConverter.to(session.getId(), map);
+        return SessionConverter.to(session.getId());
     }
 
     private HashMap<String, Object> getSessionMessage(Long profileId, String question,
@@ -108,7 +106,7 @@ public class SessionService {
         } catch (JsonProcessingException e) {
             throw new FastAPIException(FastAPIErrorCode.RESPONSE_JSON_PARSING_ERROR);
         } catch (Exception e) {
-            log.error("❌ 메시지 저장 실패", e);
+            log.error("메시지 저장 실패", e);
             throw e;
         }
     }
