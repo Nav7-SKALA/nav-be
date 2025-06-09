@@ -1,9 +1,13 @@
 package com.skala.nav7.api.project.controller;
 
-import com.skala.nav7.api.profile.converter.ProfileConverter;
 import com.skala.nav7.api.profile.entity.Profile;
-import com.skala.nav7.api.project.dto.ProjectRequestDTO;
-import com.skala.nav7.api.project.service.ProjectService;
+import com.skala.nav7.api.project.converter.ProjectConverter;
+import com.skala.nav7.api.project.dto.request.ProjectRequestDTO;
+import com.skala.nav7.api.project.entity.MemberProject;
+import com.skala.nav7.api.project.service.MemberProjectService;
+import com.skala.nav7.api.project.service.domain.DomainService;
+import com.skala.nav7.api.role.service.RoleService;
+import com.skala.nav7.api.skillset.service.SkillSetService;
 import com.skala.nav7.global.apiPayload.ApiResponse;
 import com.skala.nav7.global.auth.jwt.annotation.ProfileEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,7 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 @Tag(name = "Profile 관련 API", description = "Profile 관련 API 입니다.")
 public class ProjectController {
-    private final ProjectService projectService;
+    private final MemberProjectService projectService;
+    private final RoleService roleService;
+    private final DomainService domainService;
+    private final SkillSetService skillSetService;
 
     @Operation(
             summary = "내 프로젝트 불러오기",
@@ -32,9 +40,11 @@ public class ProjectController {
     )
     @GetMapping(value = "/profiles/me/projects")
     public ApiResponse<?> getProjects(
-            @ProfileEntity Profile profile
+            @ProfileEntity Profile profile,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "4") int size
     ) {
-        return ApiResponse.onSuccess(ProfileConverter.to(profile));
+        return ApiResponse.onSuccess(projectService.getPaginatedProjects(profile, page, size));
     }
 
     @Operation(
@@ -46,7 +56,11 @@ public class ProjectController {
             @ProfileEntity Profile profile,
             @RequestBody @Valid ProjectRequestDTO.CreateProjectDTO request
     ) {
-        return ApiResponse.onSuccess("");
+        MemberProject project = projectService.createNewProject(profile,
+                roleService.findAllById(request.role()), domainService.getDomain(request.domainId()),
+                skillSetService.getSkillSetList(request.skillSetIds()),
+                request);
+        return ApiResponse.onSuccess(ProjectConverter.to(project));
     }
 
     @Operation(

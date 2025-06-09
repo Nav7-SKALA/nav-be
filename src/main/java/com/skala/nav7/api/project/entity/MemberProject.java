@@ -1,8 +1,9 @@
 package com.skala.nav7.api.project.entity;
 
 import com.skala.nav7.api.profile.entity.Profile;
-import com.skala.nav7.api.project.entity.role.ProjectRole;
-import com.skala.nav7.api.skillset.entity.SkillCode;
+import com.skala.nav7.api.project.entity.domain.Domain;
+import com.skala.nav7.api.role.entity.ProjectRole;
+import com.skala.nav7.api.skillset.entity.ProjectSkillSet;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +18,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -57,18 +57,53 @@ public class MemberProject {
     String projectDescribe;
 
     @Column(name = "started_at", nullable = false)
-    LocalDate startedAt;
+    Integer startYear;
 
     @Column(name = "finished_at", nullable = false)
-    LocalDate finishedAt;
+    Integer endYear;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "project_size", nullable = false)
-    SkillCode skillCode;
+    ProjectSize projectSize;
 
     @Column(name = "isTurningPoint", nullable = false)
     Boolean isTurningPoint;
     @OneToMany(mappedBy = "memberProject", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    List<ProjectSkillSet> projectSkillSets = new ArrayList<>();
+    @OneToMany(mappedBy = "memberProject", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     List<ProjectRole> projectRoles = new ArrayList<>();
+
+    public void setProjectSkillSets(List<ProjectSkillSet> projectSkillSets) {
+        this.projectSkillSets = projectSkillSets;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public void setProjectDescribe(String projectDescribe) {
+        this.projectDescribe = projectDescribe;
+    }
+
+    public void setStartYear(Integer startYear) {
+        this.startYear = startYear;
+    }
+
+    public void setEndYear(Integer endYear) {
+        this.endYear = endYear;
+    }
+
+    public void setProjectSize(ProjectSize projectSize) {
+        this.projectSize = projectSize;
+    }
+
+    public void setTurningPoint(Boolean turningPoint) {
+        isTurningPoint = turningPoint;
+    }
+
+    public void setProjectRoles(List<ProjectRole> projectRoles) {
+        this.projectRoles = projectRoles;
+    }
 }

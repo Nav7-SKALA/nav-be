@@ -5,18 +5,18 @@ import lombok.Getter;
 @Getter
 public enum ProjectSize {
     UNKNOWN("정보없음"),
-    SMALL("소형"), // 20억 미만
-    MEDIUM_SMALL("중소형"), // 20억 이상~50억 미만
-    MEDIUM("중형"), // 50억 이상~100억 미만
-    LARGE("대형"), // 100억 이상~500억 미만
-    EXTRA_LARGE("초대형"); // 500억 이상
+    SMALL("소형(20억 미만)"),
+    MEDIUM_SMALL("중소형(20억 이상~50억 미만)"),
+    MEDIUM("중형(50억 이상~100억 미만)"),
+    LARGE("대형(100억 이상~500억 미만)"),
+    EXTRA_LARGE("초대형(500억 이상)");
 
     private final String korean;
 
     ProjectSize(String korean) {
         this.korean = korean;
     }
-    
+
     public static ProjectSize fromDescription(String description) {
         if (description == null || description.trim().isEmpty()) {
             return UNKNOWN;
