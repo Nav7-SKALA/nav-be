@@ -3,6 +3,8 @@ package com.skala.nav7.api.skillset.entity;
 import com.skala.nav7.global.base.entity.SoftDeletableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,12 +33,15 @@ public class SkillSet extends SoftDeletableEntity {
     @SequenceGenerator(name = "skill_set_seq", sequenceName = "skill_set_seq", allocationSize = 1)
     @Column(name = "skillset_id")
     Long id;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", nullable = false)
     Job job;
-
     @Column(name = "skill_set_name", nullable = false)
     String skillSetName;
+    @Column(name = "skill_label", nullable = false)
+    String skillLabel;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "skill_code", nullable = false, unique = true)
+    SkillCode skillCode; // S1, S2, P1 등
 
 }

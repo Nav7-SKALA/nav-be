@@ -1,7 +1,9 @@
 package com.skala.nav7.api.project.entity;
 
 import com.skala.nav7.api.profile.entity.Profile;
+import com.skala.nav7.api.project.entity.role.ProjectRole;
 import com.skala.nav7.api.skillset.entity.SkillCode;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,9 +14,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,5 +67,8 @@ public class MemberProject {
     SkillCode skillCode;
 
     @Column(name = "isTurningPoint", nullable = false)
-    Integer isTurningPoint;
+    Boolean isTurningPoint;
+    @OneToMany(mappedBy = "memberProject", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    List<ProjectRole> projectRoles = new ArrayList<>();
 }

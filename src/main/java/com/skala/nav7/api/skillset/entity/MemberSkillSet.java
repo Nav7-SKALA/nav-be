@@ -1,7 +1,6 @@
-package com.skala.nav7.api.skillset.memberSkillSet.entity;
+package com.skala.nav7.api.skillset.entity;
 
 import com.skala.nav7.api.profile.entity.Profile;
-import com.skala.nav7.api.skillset.entity.SkillSet;
 import com.skala.nav7.global.base.entity.SoftDeletableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,16 +28,20 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "member_skill_set")
 public class MemberSkillSet extends SoftDeletableEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_skill_set_seq")
+    @SequenceGenerator(name = "member_skill_set_seq", sequenceName = "member_skill_set_seq", allocationSize = 1)
     @Column(name = "member_skillset_id")
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id", nullable = false)
+    Job job;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "skillset_id", nullable = false)
     SkillSet skillSet;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)
     Profile profile;
-}
 
+}
