@@ -36,9 +36,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: nav7-be-service
+                name: nav7-fe-service
                 port:
-                  number: 8080
+                  number: 80
   tls:
     - hosts:
         - sk-nav7.skala25a.project.skala-ai.com

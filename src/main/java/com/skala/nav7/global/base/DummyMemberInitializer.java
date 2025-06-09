@@ -5,12 +5,17 @@ import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.member.repository.MemberRepository;
 import com.skala.nav7.api.profile.entity.Profile;
 import com.skala.nav7.api.profile.repository.ProfileRepository;
+import com.skala.nav7.api.project.entity.Domain;
+import com.skala.nav7.api.project.entity.role.Role;
+import com.skala.nav7.api.project.entity.role.RoleType;
+import com.skala.nav7.api.project.repository.DomainRepository;
+import com.skala.nav7.api.project.repository.RoleRepository;
 import com.skala.nav7.api.session.entity.Session;
-import com.skala.nav7.api.session.entity.SessionMessage;
 import com.skala.nav7.api.session.repository.SessionRepository;
 import jakarta.annotation.PostConstruct;
-import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,11 +24,13 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DummyMemberInitializer {
+    private final DomainRepository domainRepository;
     private final MongoTemplate mongoTemplate;
     private final MemberRepository memberRepository;
     private final SessionRepository sessionRepository;
     private final ProfileRepository profileRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
     private Member dummyMember;
 
     @PostConstruct
@@ -45,54 +52,65 @@ public class DummyMemberInitializer {
                     .build();
             profileRepository.save(profile);
             initSession();
-        } else {
-            dummyMember = memberRepository.findById(1L).get();
+            initRole();
+            initDomain();
         }
     }
 
     private void initSession() {
-
-        Session session = Session.builder()
-                .sessionTitle("커리어 Path 추천").member(dummyMember).build();
-        sessionRepository.save(session);
-
-        String sessionId = session.getId().toString();
-
-        List<SessionMessage> messages = List.of(
-                SessionMessage.builder()
-                        .sessionId(sessionId)
-                        .createdAt(LocalDateTime.now())
-                        .question("프론트엔드인데, 앞이 막막해... 앞으로의 Path 추천해줘")
-                        .answer("클라우드와 백엔드 시스템 이해를 위해 강의를 들어보세요.")
-                        .build(),
-                SessionMessage.builder()
-                        .sessionId(sessionId)
-                        .createdAt(LocalDateTime.now().plusSeconds(5))
-                        .question("React를 공부하고 있는데 그 다음은?")
-                        .answer("상태관리 도구와 TypeScript를 학습해보는 걸 추천해요.")
-                        .build(),
-                SessionMessage.builder()
-                        .sessionId(sessionId)
-                        .createdAt(LocalDateTime.now().plusSeconds(10))
-                        .question("프로젝트를 뭘 해야 할까요?")
-                        .answer("팀 프로젝트로 포트폴리오를 만들어보세요. 예: Todo앱, 블로그 등")
-                        .build(),
-                SessionMessage.builder()
-                        .sessionId(sessionId)
-                        .createdAt(LocalDateTime.now().plusSeconds(15))
-                        .question("CS 지식은 얼마나 알아야 해요?")
-                        .answer("네트워크, 운영체제, DB 기본 정도는 알고 있으면 좋아요.")
-                        .build(),
-                SessionMessage.builder()
-                        .sessionId(sessionId)
-                        .createdAt(LocalDateTime.now().plusSeconds(20))
-                        .question("이력서를 어떻게 써야 하나요?")
-                        .answer("구체적인 프로젝트 경험과 역할, 성과를 중심으로 작성해보세요.")
-                        .build()
+        List<Session> sessions = List.of(
+                buildSession("ad32048a-3b55-4ddb-bee5-b9ffe1c06cee", "봄맞이 프로젝트 킥오프"),
+                buildSession("69ba03d3-ed0c-4806-98bc-2555eeaebe91", "스프링 시큐리티 실습"),
+                buildSession("ca6d1885-ea12-4b7c-8d5c-807368808be2", "데이터베이스 설계 리뷰"),
+                buildSession("c5b0dc9c-7c9f-4c72-b65c-f91c7d4e0dc5", "OAuth2 흐름 정리"),
+                buildSession("fa9bafe2-2349-4b28-b733-4cc7f6a3b415", "Redis 캐시 전략 논의"),
+                buildSession("64967265-3702-44b6-8660-23f5cde85d44", "MySQL vs PostgreSQL 비교"),
+                buildSession("a2c78cf2-2c18-43ee-ae7f-2d41677ef00a", "Swagger 문서화 실습"),
+                buildSession("1d44b804-bbb2-4092-b547-c894eb571e20", "S3 정적 파일 업로드"),
+                buildSession("ae37b4d0-1e3e-4d06-8cc4-cb4b7284b4aa", "인증 인가 보안 점검"),
+                buildSession("12ac168c-c1bc-43fd-b02e-49c7cd7e2c67", "멀티모듈 구조 설계"),
+                buildSession("ad6e82d2-99b8-4fe9-9f58-73d0c663d71e", "Docker Compose 사용법"),
+                buildSession("7c4f1d10-6178-4fa3-aed2-9981bc80e260", "Github Actions CI 구축"),
+                buildSession("696ed275-58ca-4b5b-9e6d-30a041218749", "PM이 되고 싶어요"),
+                buildSession("d8995cfc-075c-4c38-ad82-8175a25e53fa", "테스트입니다"),
+                buildSession("d2545549-f329-43ef-a50b-1923c970f7fb", "Frontend 개발자가 되고 싶어요")
         );
 
-        mongoTemplate.insertAll(messages);
+        sessionRepository.saveAll(sessions);
+    }
 
+    private Session buildSession(String uuidStr, String title) {
+        return Session.builder()
+                .id(UUID.fromString(uuidStr))
+                .member(dummyMember)
+                .sessionTitle(title)
+                .build();
+    }
+
+
+    private void initDomain() {
+        List<String> domainNames = List.of(
+                "유통/물류/서비스", "제2금융", "(제조) 대외", "공공", "미디어/콘텐츠", "통신", "금융",
+                "(제조) 대내 Process", "공통", "Global", "(제조) 대내 Hi-Tech", "금융등", "대외 및 그룹사",
+                "제1금융", "의료", "물류", "보험", "은행", "SK 그룹", "유통", "제조"
+        );
+
+        for (String name : new HashSet<>(domainNames)) {
+            if (!domainRepository.existsByDomainName(name)) {
+                domainRepository.save(Domain.builder().domainName(name).build());
+            }
+        }
+    }
+
+    private void initRole() {
+        for (RoleType roleType : RoleType.values()) {
+            if (!roleRepository.existsByRoleName(roleType.getKorean())) {
+                Role role = Role.builder()
+                        .roleName(roleType.getKorean())
+                        .build();
+                roleRepository.save(role);
+            }
+        }
     }
 
     public Member getDummyMember() {

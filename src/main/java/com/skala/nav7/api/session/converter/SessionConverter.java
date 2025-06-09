@@ -11,14 +11,13 @@ import java.util.UUID;
 import org.springframework.data.domain.Slice;
 
 public class SessionConverter {
-    public static SessionResponseDTO.newSessionDTO to(UUID sessionId, HashMap<String, String> map) {
+    public static SessionResponseDTO.newSessionDTO to(UUID sessionId) {
         return SessionResponseDTO.newSessionDTO.builder()
-                .map(map)
                 .sessionId(sessionId)
                 .build();
     }
 
-    public static SessionMessageResponseDTO.newMessageDTO toMessage(UUID sessionId, HashMap<String, String> map) {
+    public static SessionMessageResponseDTO.newMessageDTO toMessage(UUID sessionId, HashMap<String, Object> map) {
         return SessionMessageResponseDTO.newMessageDTO.builder()
                 .map(map)
                 .sessionId(sessionId)

@@ -20,8 +20,10 @@ import com.skala.nav7.api.session.exception.SessionException;
 import com.skala.nav7.api.session.repository.SessionMessageRepository;
 import com.skala.nav7.api.session.repository.SessionRepository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +46,8 @@ public class SessionService {
     private final FastApiClientService fastApiClientService;
     private final MongoTemplate mongoTemplate;
     private final ObjectMapper objectMapper;
+    private static final String _ID = "_id";
+
     private static final String SESSION_ID = "sessionId";
     private static final String AGENT_ROLE_MODEL = "RoleModel";
     private static final String KEY_PROFILE_ID = "profileId_";
@@ -54,12 +58,10 @@ public class SessionService {
     public SessionResponseDTO.newSessionDTO createNewSessions(Member member, SessionRequestDTO.newSessionDTO dto) {
         Session session = Session.builder().member(member).sessionTitle(dto.question()).build();
         sessionRepository.save(session);
-        HashMap<String, String> map = getSessionMessage(member.getId(), dto.question(),
-                String.valueOf(session.getId()));
-        return SessionConverter.to(session.getId(), map);
+        return SessionConverter.to(session.getId());
     }
 
-    private HashMap<String, String> getSessionMessage(Long profileId, String question,
+    private HashMap<String, Object> getSessionMessage(Long profileId, String question,
                                                       String sessionId) {
         FastAPIResponseDTO response = fastApiClientService.askCareerPath(profileId, question,
                 sessionId);
@@ -71,7 +73,7 @@ public class SessionService {
         String agent = response.content().result().agent();
         JsonNode textNode = response.content().result().text();
 
-        HashMap<String, String> map = new HashMap<>();
+        HashMap<String, Object> map = new HashMap<>();
 
         try {
             if (AGENT_ROLE_MODEL.equals(agent) && textNode.isArray()) {
@@ -79,11 +81,14 @@ public class SessionService {
                         textNode.toString(),
                         objectMapper.getTypeFactory().constructCollectionType(List.class, RoleModelDTO.class)
                 );
-                for (int i = 0; i < roleModels.size(); i++) {
-                    RoleModelDTO rm = roleModels.get(i);
-                    map.put(KEY_PROFILE_ID + i, String.valueOf(rm.profileId()));
-                    map.put(KEY_SCORE + i, String.valueOf(rm.similarity_score()));
+                List<Map<String, String>> responseList = new ArrayList<>();
+                for (RoleModelDTO rm : roleModels) {
+                    Map<String, String> roleMap = new HashMap<>();
+                    roleMap.put("profileId", String.valueOf(rm.profileId()));
+                    roleMap.put("score", String.valueOf(rm.similarity_score()));
+                    responseList.add(roleMap);
                 }
+                map.put("response", responseList);
             } else if (textNode.isTextual()) {
                 map.put(KEY_RESPONSE, textNode.asText());
             } else {
@@ -101,7 +106,7 @@ public class SessionService {
         } catch (JsonProcessingException e) {
             throw new FastAPIException(FastAPIErrorCode.RESPONSE_JSON_PARSING_ERROR);
         } catch (Exception e) {
-            log.error("❌ 메시지 저장 실패", e);
+            log.error("메시지 저장 실패", e);
             throw e;
         }
     }
@@ -118,7 +123,7 @@ public class SessionService {
     public SessionMessageResponseDTO.newMessageDTO createNewMessage(Member member, UUID sessionId,
                                                                     SessionMessageRequestDTO.newMessageDTO dto) {
         Session session = getSession(sessionId);
-        HashMap<String, String> map = getSessionMessage(member.getId(), dto.question(),
+        HashMap<String, Object> map = getSessionMessage(member.getId(), dto.question(),
                 String.valueOf(session.getId())); //todo:memberId 를 profileId로 수정
         return SessionConverter.toMessage(session.getId(), map);
     }
@@ -128,13 +133,12 @@ public class SessionService {
         Session session = getSession(sessionId);
         checkMemberAuth(member, session);
         Query query = new Query();
-        query.addCriteria(Criteria.where(SESSION_ID).is(sessionId.toString())); //해당 SessionId만 가져옴
-        //커서이후의 데이터만 필터링한다
+        query.addCriteria(Criteria.where(SESSION_ID).is(sessionId.toString()));
         if (cursor != null && !cursor.isEmpty()) {
-            query.addCriteria(Criteria.where("_id").gt(new ObjectId(cursor)));
+            query.addCriteria(Criteria.where(_ID).lt(new ObjectId(cursor))); // 핵심 수정
         }
-        query.with(Sort.by(Direction.ASC, "_id")); //_id 오름차순 필터링
-        query.limit(size + 1); //조회 갯수 제한
+        query.with(Sort.by(Direction.DESC, _ID)); // 최신 → 과거
+        query.limit(size + 1);
         List<SessionMessage> messages = mongoTemplate.find(query, SessionMessage.class);
 
         return SessionConverter.to(session, messages, size);
