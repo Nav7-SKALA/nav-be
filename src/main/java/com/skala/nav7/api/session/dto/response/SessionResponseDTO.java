@@ -2,7 +2,6 @@ package com.skala.nav7.api.session.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
@@ -13,24 +12,7 @@ public record SessionResponseDTO(
     @Schema(description = "세션 생성 응답 DTO")
     public record newSessionDTO(
             @Schema(description = "세션 ID", example = "123")
-            UUID sessionId,
-
-            @Schema(
-                    description = """
-                            AI 응답 결과. 응답 타입에 따라 구조가 달라집니다.
-                                    
-                            - 일반 메시지: {"response": "안녕하세요, 어떤 진로가 고민이신가요?"}
-                            - RoleModel 에이전트: {"profileId_0": "10", "score_0": "0.85", "profileId_1": "12", "score_1": "0.73"}
-                            - 기타 구조 (fallback): {"raw": "{\\"someField\\":\\"value\\",\\"anotherField\\":123}"}
-                            """,
-                    type = "object",
-                    example = """
-                            {
-                              "response": "안녕하세요, 어떤 진로가 고민이신가요?"
-                            }
-                            """
-            )
-            HashMap<String, Object> map
+            UUID sessionId
     ) {
     }
 
