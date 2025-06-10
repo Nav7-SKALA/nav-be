@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skala.nav7.api.member.entity.Member;
+import com.skala.nav7.api.profile.entity.Profile;
+import com.skala.nav7.api.profile.repository.ProfileRepository;
 import com.skala.nav7.api.session.converter.SessionConverter;
 import com.skala.nav7.api.session.dto.request.SessionMessageRequestDTO;
 import com.skala.nav7.api.session.dto.request.SessionRequestDTO;
@@ -43,6 +45,7 @@ import org.springframework.stereotype.Service;
 public class SessionService {
     private final SessionRepository sessionRepository;
     private final SessionMessageRepository sessionMessageRepository;
+    private final ProfileRepository profileRepository;
     private final FastApiClientService fastApiClientService;
     private final MongoTemplate mongoTemplate;
     private final ObjectMapper objectMapper;
@@ -55,6 +58,9 @@ public class SessionService {
     private static final String KEY_SCORE = "score";
     private static final String KEY_RESPONSE = "response";
     private static final String KEY_RAW = "raw";
+    private static final String CAREER_TITLE = "careerTitle";
+    private static final String YEARS = "years";
+
 
     public SessionResponseDTO.newSessionDTO createNewSessions(Member member, SessionRequestDTO.newSessionDTO dto) {
         Session session = Session.builder().member(member).sessionTitle(dto.question()).build();
@@ -85,9 +91,18 @@ public class SessionService {
                 List<Map<String, String>> responseList = new ArrayList<>();
                 for (RoleModelDTO rm : roleModels) {
                     Map<String, String> roleMap = new HashMap<>();
+                    //todo: error 던지는걸로 수정
+//                    Profile profile = profileRepository.findById(rm.profileId()).orElseThrow(
+//                            () -> new ProfileException(ProfileErrorCode.PROFILE_NOT_FOUND)
+//                    );
+                    Profile profile = profileRepository.findById(rm.profileId())
+                            .orElse(Profile.builder().id(rm.profileId()).careerTitle("프론트엔드 개발자").careerYear(5)
+                                    .build()); //todo: 임시 더미 데이터
                     roleMap.put(KEY_PROFILE_ID, String.valueOf(rm.profileId()));
                     roleMap.put(KEY_NAME, nameCreator.create());
                     roleMap.put(KEY_SCORE, String.valueOf(rm.similarity_score()));
+                    roleMap.put(CAREER_TITLE, profile.getCareerTitle());
+                    roleMap.put(YEARS, String.valueOf(profile.getCareerYear()));
                     responseList.add(roleMap);
                 }
                 map.put(KEY_RESPONSE, responseList);
