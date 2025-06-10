@@ -13,7 +13,7 @@ spring:
     mongodb:
       uri: ${MONGO_URI}
     redis:
-      url: redis://:Skala25a!23$@ac55000eca8b749a6b916f7a04c4c1c2-9f9c8ea7fa9b0e7a.elb.ap-northeast-2.amazonaws.com:6379
+      url: redis://default:Skala25a!23$@redis-1-master.redis:6379
 
   mail:
     host: smtp.gmail.com
