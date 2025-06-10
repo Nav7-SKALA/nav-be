@@ -46,12 +46,13 @@ public class SessionService {
     private final FastApiClientService fastApiClientService;
     private final MongoTemplate mongoTemplate;
     private final ObjectMapper objectMapper;
+    private final RandomNameCreator nameCreator;
     private static final String _ID = "_id";
-
     private static final String SESSION_ID = "sessionId";
     private static final String AGENT_ROLE_MODEL = "RoleModel";
-    private static final String KEY_PROFILE_ID = "profileId_";
-    private static final String KEY_SCORE = "score_";
+    private static final String KEY_PROFILE_ID = "profileId";
+    private static final String KEY_NAME = "name";
+    private static final String KEY_SCORE = "score";
     private static final String KEY_RESPONSE = "response";
     private static final String KEY_RAW = "raw";
 
@@ -84,11 +85,12 @@ public class SessionService {
                 List<Map<String, String>> responseList = new ArrayList<>();
                 for (RoleModelDTO rm : roleModels) {
                     Map<String, String> roleMap = new HashMap<>();
-                    roleMap.put("profileId", String.valueOf(rm.profileId()));
-                    roleMap.put("score", String.valueOf(rm.similarity_score()));
+                    roleMap.put(KEY_PROFILE_ID, String.valueOf(rm.profileId()));
+                    roleMap.put(KEY_NAME, nameCreator.create());
+                    roleMap.put(KEY_SCORE, String.valueOf(rm.similarity_score()));
                     responseList.add(roleMap);
                 }
-                map.put("response", responseList);
+                map.put(KEY_RESPONSE, responseList);
             } else if (textNode.isTextual()) {
                 map.put(KEY_RESPONSE, textNode.asText());
             } else {
@@ -123,8 +125,8 @@ public class SessionService {
     public SessionMessageResponseDTO.newMessageDTO createNewMessage(Member member, UUID sessionId,
                                                                     SessionMessageRequestDTO.newMessageDTO dto) {
         Session session = getSession(sessionId);
-        HashMap<String, Object> map = getSessionMessage(member.getId(), dto.question(),
-                String.valueOf(session.getId())); //todo:memberId 를 profileId로 수정
+        HashMap<String, Object> map = getSessionMessage(member.getProfile().getId(), dto.question(),
+                String.valueOf(session.getId()));
         return SessionConverter.toMessage(session.getId(), map);
     }
 
@@ -135,7 +137,7 @@ public class SessionService {
         Query query = new Query();
         query.addCriteria(Criteria.where(SESSION_ID).is(sessionId.toString()));
         if (cursor != null && !cursor.isEmpty()) {
-            query.addCriteria(Criteria.where(_ID).lt(new ObjectId(cursor))); // 핵심 수정
+            query.addCriteria(Criteria.where(_ID).lt(new ObjectId(cursor)));
         }
         query.with(Sort.by(Direction.DESC, _ID)); // 최신 → 과거
         query.limit(size + 1);
@@ -151,7 +153,7 @@ public class SessionService {
         sessionRepository.delete(session);
 
         Query query = new Query();
-        query.addCriteria(Criteria.where(SESSION_ID).is(sessionId.toString())); // 특정 세션의 메시지 전부
+        query.addCriteria(Criteria.where(SESSION_ID).is(sessionId.toString()));
         mongoTemplate.remove(query, SessionMessage.class);
     }
 

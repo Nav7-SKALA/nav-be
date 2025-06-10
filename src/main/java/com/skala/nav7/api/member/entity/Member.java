@@ -1,5 +1,6 @@
 package com.skala.nav7.api.member.entity;
 
+import com.skala.nav7.api.profile.entity.Profile;
 import com.skala.nav7.global.base.entity.SoftDeletableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -46,4 +48,6 @@ public class Member extends SoftDeletableEntity {
 
     @Column(name = "member_name", nullable = false)
     String memberName;
+    @OneToOne(mappedBy = "member")
+    private Profile profile;
 }
