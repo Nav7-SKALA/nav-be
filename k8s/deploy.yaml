@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: nav7-be
-          image: amdp-registry.skala-ai.com/skala25a/sk-nav7-be:1.0.0-31-d6254c91f086
+          image: amdp-registry.skala-ai.com/skala25a/sk-nav7-be:1.0.0-32-3d7094bde38d
           ports:
             - containerPort: 8080
           env:
