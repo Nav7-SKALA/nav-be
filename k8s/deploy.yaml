@@ -55,8 +55,8 @@ spec:
                 secretKeyRef:
                   name: nav-be-secret
                   key: REDIS_PASSWORD
-            - name: SPRING_DATA_REDIS_PORT
-              value: "6379"
+            - name: SPRING_DATA_REDIS_USERNAME
+              value: "default"
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
