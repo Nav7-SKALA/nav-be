@@ -20,7 +20,7 @@ spring:
       client-type: lettuce
 
   mail:
-    host: smtp.gmail.com
+    host: smtp.gmail.com가
     port: 587
     username: ${GOOGLE_EMAIL_ACCOUNT}
     password: ${GOOGLE_EMAIL_PW}
