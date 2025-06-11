@@ -1,4 +1,4 @@
-package com.skala.nav7.api.experience.controller;
+package com.skala.nav7.api.experience.error;
 
 import com.skala.nav7.global.apiPayload.code.base.BaseCode;
 import com.skala.nav7.global.apiPayload.dto.ReasonDTO;
