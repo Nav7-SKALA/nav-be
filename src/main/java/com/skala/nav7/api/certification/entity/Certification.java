@@ -27,6 +27,6 @@ public class Certification {
     @Column(name = "certification_id")
     Long id;
 
-    @Column(name = "certification_name", nullable = false)
+    @Column(name = "certification_name", nullable = false, unique = true)
     String certificationName;
 }
