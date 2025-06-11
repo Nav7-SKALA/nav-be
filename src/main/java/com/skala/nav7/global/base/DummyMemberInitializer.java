@@ -1,5 +1,9 @@
 package com.skala.nav7.global.base;
 
+import com.skala.nav7.api.certification.entity.Certification;
+import com.skala.nav7.api.certification.memberCertification.entity.MemberCertification;
+import com.skala.nav7.api.certification.memberCertification.repository.MemberCertificationRepository;
+import com.skala.nav7.api.certification.repository.CertificationRepository;
 import com.skala.nav7.api.member.entity.Gender;
 import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.member.repository.MemberRepository;
@@ -17,12 +21,12 @@ import com.skala.nav7.api.skillset.entity.SkillSet;
 import com.skala.nav7.api.skillset.repository.JobRepository;
 import com.skala.nav7.api.skillset.repository.SkillSetRepository;
 import jakarta.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +34,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DummyMemberInitializer {
     private final DomainRepository domainRepository;
-    private final MongoTemplate mongoTemplate;
+    private final CertificationRepository certificationRepository;
     private final MemberRepository memberRepository;
     private final SessionRepository sessionRepository;
     private final ProfileRepository profileRepository;
@@ -38,32 +42,44 @@ public class DummyMemberInitializer {
     private final RoleRepository roleRepository;
     private final SkillSetRepository skillSetRepository;
     private final JobRepository jobRepository;
+    private final MemberCertificationRepository memberCertificationRepository;
     private Member dummyMember;
 
     @PostConstruct
     public void init() {
         if (memberRepository.findById(1L).isEmpty()) {
-            Member dummy = Member.builder()
-                    .email("ccyy8432@naver.com")
-                    .gender(Gender.FEMALE)
-                    .loginId("testId")
-                    .password(passwordEncoder.encode("test1234"))
-                    .memberName("김더미")
-                    .build();
-            memberRepository.save(dummy);
-            dummyMember = dummy;
-            Profile profile = Profile.builder()
-                    .member(dummyMember)
-                    .careerTitle("백엔드 개발자")
-                    .careerYear(2)
-                    .build();
-            profileRepository.save(profile);
+            initMember();
+            Profile profile = initProfile();
             initSession();
             initRole();
             initDomain();
             initRoles();
             initJobsAndSkillSets();
+            initCertifications();
+            initMemberCertifications(profile);
         }
+    }
+
+    private void initMember() {
+        Member dummy = Member.builder()
+                .email("ccyy8432@naver.com")
+                .gender(Gender.FEMALE)
+                .loginId("testId")
+                .password(passwordEncoder.encode("test1234"))
+                .memberName("김더미")
+                .build();
+        memberRepository.save(dummy);
+        dummyMember = dummy;
+    }
+
+    private Profile initProfile() {
+        Profile profile = Profile.builder()
+                .member(dummyMember)
+                .careerTitle("백엔드 개발자")
+                .careerYear(2)
+                .build();
+        profileRepository.save(profile);
+        return profile;
     }
 
     private void initSession() {
@@ -94,6 +110,35 @@ public class DummyMemberInitializer {
                 .member(dummyMember)
                 .sessionTitle(title)
                 .build();
+    }
+
+    private void initCertifications() {
+        List<String> certificationNames = List.of(
+                "정보처리기사", "정보처리산업기사", "ADsP", "SQLD", "컴퓨터활용능력 1급", "컴퓨터활용능력 2급",
+                "리눅스마스터 2급", "AWS SAA", "TOEIC", "TOEFL", "OPIc", "한국사능력검정시험 1급",
+                "정보보안기사", "네트워크관리사 2급", "GTQ 포토샵", "MOS Master", "빅데이터분석기사"
+        );
+
+        for (String name : certificationNames) {
+            if (!certificationRepository.existsByCertificationName(name)) {
+                certificationRepository.save(Certification.builder()
+                        .certificationName(name)
+                        .build());
+            }
+        }
+    }
+
+    private void initMemberCertifications(Profile profile) {
+        LocalDate baseDate = LocalDate.of(2023, 1, 1);
+
+        for (int i = 1; i <= 10; i++) {
+            MemberCertification memberCert = MemberCertification.builder()
+                    .profile(profile)
+                    .certification(certificationRepository.findById((long) i).get())
+                    .acquisitionDate(baseDate.plusMonths(i))
+                    .build();
+            memberCertificationRepository.save(memberCert);
+        }
     }
 
     private void initJobsAndSkillSets() {
