@@ -1,7 +1,7 @@
 package com.skala.nav7.api.certification.memberCertification.entity;
 
 import com.skala.nav7.api.certification.entity.Certification;
-import com.skala.nav7.api.member.entity.Member;
+import com.skala.nav7.api.profile.entity.Profile;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,8 +34,8 @@ public class MemberCertification {
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    Member member;
+    @JoinColumn(name = "profile_id", nullable = false)
+    Profile profile;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "certification_id", nullable = false)
