@@ -9,7 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.AccessLevel;
@@ -18,6 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
@@ -26,21 +27,31 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "experience")
+@SQLRestriction("deleted_at IS NULL")
 public class Experience extends SoftDeletableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "experience_id", nullable = false)
     Long id;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)
     Profile profile;
-
     @Column(name = "experience_name")
     String experienceName;
     @Column(name = "experience_describe")
     String experienceDescribe;
-
     @Column(name = "experienced_at")
     LocalDate experiencedAt;
+
+    public void updateExperienceName(String experienceName) {
+        this.experienceName = experienceName;
+    }
+
+    public void updateExperienceDescribe(String experienceDescribe) {
+        this.experienceDescribe = experienceDescribe;
+    }
+
+    public void updateExperiencedAt(LocalDate experiencedAt) {
+        this.experiencedAt = experiencedAt;
+    }
 }
