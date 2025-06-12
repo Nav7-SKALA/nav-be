@@ -21,6 +21,7 @@ import com.skala.nav7.api.session.exception.SessionErrorCode;
 import com.skala.nav7.api.session.exception.SessionException;
 import com.skala.nav7.api.session.repository.SessionMessageRepository;
 import com.skala.nav7.api.session.repository.SessionRepository;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +62,14 @@ public class SessionService {
     private static final String CAREER_TITLE = "careerTitle";
     private static final String YEARS = "years";
 
+    @Transactional
+    public void setSessionTimeout(UUID sessionId) {
+        Session session = getSession(sessionId);
+        if (!session.isTimeOut()) {
+            session.setTimeOut(true);
+        }
+        sessionRepository.save(session);
+    }
 
     public SessionResponseDTO.newSessionDTO createNewSessions(Member member, SessionRequestDTO.newSessionDTO dto) {
         Session session = Session.builder().member(member).sessionTitle(dto.question()).build();
