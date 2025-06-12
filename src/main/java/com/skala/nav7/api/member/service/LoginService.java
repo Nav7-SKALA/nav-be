@@ -1,6 +1,8 @@
 package com.skala.nav7.api.member.service;
 
 import com.skala.nav7.api.member.dto.request.AuthRequestDTO;
+import com.skala.nav7.api.member.dto.response.AuthResponseDTO;
+import com.skala.nav7.api.member.dto.response.AuthResponseDTO.LoginInfoDTO;
 import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.member.error.AuthErrorCode;
 import com.skala.nav7.api.member.error.AuthException;
@@ -26,7 +28,7 @@ public class LoginService {
     private final JWTProvider jwtProvider;
     private final CookieService cookieService;
 
-    public void login(AuthRequestDTO.LoginRequestDTO dto, HttpServletResponse response) {
+    public AuthResponseDTO.LoginInfoDTO login(AuthRequestDTO.LoginRequestDTO dto, HttpServletResponse response) {
         String loginId = dto.loginId();
         String password = dto.password();
         Member member = memberRepository.findByLoginId(loginId).orElseThrow(
@@ -40,6 +42,7 @@ public class LoginService {
         ResponseCookie refresh = cookieService.createCookie(AuthConstant.REFRESH_TOKEN.getValue(), id);
         setAuthentication(access.getValue());
         setResponse(response, access, refresh);
+        return new LoginInfoDTO(member.getId(), member.getProfile().getId(), member.getMemberName());
     }
 
     public void setAuthentication(String accessToken) {

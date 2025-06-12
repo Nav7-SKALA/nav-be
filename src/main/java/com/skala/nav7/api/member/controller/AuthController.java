@@ -73,10 +73,9 @@ public class AuthController {
     public ResponseEntity<ApiResponse<?>> login(
             @Parameter(description = "로그인 시 필요한 아이디, 비밀번호") @RequestBody @Valid AuthRequestDTO.LoginRequestDTO dto,
             HttpServletResponse response) {
-        loginService.login(dto, response);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.onSuccess(AuthSuccessCode.LOGIN_SUCCESS));
+                .body(ApiResponse.of(AuthSuccessCode.LOGIN_SUCCESS, loginService.login(dto, response)));
     }
 
     @Operation(
