@@ -107,4 +107,17 @@ public class SessionController {
         sessionService.deleteSession(member, sessionId);
         return ApiResponse.onSuccess(SessionSuccessCode.SESSION_NO_CONTENT);
     }
+
+    @Operation(
+            summary = "Session 타임아웃 처리",
+            description = "사용자가 다른 화면으로 이동했거나, 세션이 만료되었을 때 timeout 상태로 변경합니다."
+    )
+    @PostMapping("/{sessionId}/timeout")
+    public ApiResponse<?> setSessionTimeout(
+            @MemberEntity Member member,
+            @Parameter(description = "타임아웃 처리할 세션의 UUID") @PathVariable UUID sessionId
+    ) {
+        sessionService.setSessionTimeout(sessionId);
+        return ApiResponse.onSuccess("세션이 타임아웃 처리되었습니다.");
+    }
 }

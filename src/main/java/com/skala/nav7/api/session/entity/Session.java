@@ -37,4 +37,15 @@ public class Session extends BaseEntity {
     Member member;
     @Column(name = "session_title", nullable = false)
     String sessionTitle;
+    @Builder.Default
+    @Column(name = "is_timeout", nullable = false)
+    private boolean isTimeout = false;
+
+    public void setTimeOut(boolean timeOut) {
+        isTimeout = timeOut;
+    }
+
+    public boolean isTimeOut() {
+        return isTimeout;
+    }
 }

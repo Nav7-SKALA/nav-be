@@ -4,6 +4,7 @@ package com.skala.nav7.api.session.repository;
 import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.session.entity.Session;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SessionRepository extends JpaRepository<Session, UUID> {
+    List<Session> findByIsTimeoutFalseAndCreatedAtBefore(LocalDateTime dateTime);
 
     Slice<Session> findTopNByMemberOrderByCreatedAtDescIdDesc(Member member, Pageable pageable);
 
