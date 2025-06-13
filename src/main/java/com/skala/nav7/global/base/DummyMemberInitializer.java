@@ -15,6 +15,8 @@ import com.skala.nav7.api.role.entity.Role;
 import com.skala.nav7.api.role.entity.RoleType;
 import com.skala.nav7.api.role.repository.RoleRepository;
 import com.skala.nav7.api.session.entity.Session;
+import com.skala.nav7.api.session.entity.SessionMessage;
+import com.skala.nav7.api.session.repository.SessionMessageRepository;
 import com.skala.nav7.api.session.repository.SessionRepository;
 import com.skala.nav7.api.skillset.entity.Job;
 import com.skala.nav7.api.skillset.entity.SkillSet;
@@ -22,6 +24,7 @@ import com.skala.nav7.api.skillset.repository.JobRepository;
 import com.skala.nav7.api.skillset.repository.SkillSetRepository;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +37,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DummyMemberInitializer {
     private final DomainRepository domainRepository;
+    private final SessionMessageRepository sessionMessageRepository;
     private final CertificationRepository certificationRepository;
     private final MemberRepository memberRepository;
     private final SessionRepository sessionRepository;
@@ -51,6 +55,7 @@ public class DummyMemberInitializer {
             initMember();
             Profile profile = initProfile();
             initSession();
+            initSessionMessages();
             initRole();
             initDomain();
             initRoles();
@@ -110,6 +115,19 @@ public class DummyMemberInitializer {
                 .member(dummyMember)
                 .sessionTitle(title)
                 .build();
+    }
+
+    private void initSessionMessages() {
+        String sessionId = "73b1065c-5850-4602-b935-f45f94f961af";
+        for (int i = 1; i <= 10; i++) {
+            SessionMessage message = SessionMessage.builder()
+                    .sessionId(sessionId)
+                    .createdAt(LocalDateTime.now().minusMinutes(10 - i)) // 시간 역순
+                    .question("더미 질문 " + i)
+                    .answer("더미 답변 " + i)
+                    .build();
+            sessionMessageRepository.save(message);
+        }
     }
 
     private void initCertifications() {

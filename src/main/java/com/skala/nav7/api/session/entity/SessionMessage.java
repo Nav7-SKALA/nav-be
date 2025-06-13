@@ -18,7 +18,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SessionMessage {
-
     @Id
     String id;
     String sessionId;     // PostgreSQL의 UUID 기반 세션 ID
