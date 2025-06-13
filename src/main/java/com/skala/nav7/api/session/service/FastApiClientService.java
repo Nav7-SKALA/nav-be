@@ -2,11 +2,12 @@ package com.skala.nav7.api.session.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.skala.nav7.api.profile.entity.Profile;
+import com.skala.nav7.api.session.converter.FastAPIRequestConverter;
 import com.skala.nav7.api.session.dto.request.FastAPIRequestDTO;
 import com.skala.nav7.api.session.dto.response.FastAPIResponseDTO;
 import com.skala.nav7.api.session.exception.FastAPIErrorCode;
 import com.skala.nav7.api.session.exception.FastAPIException;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
@@ -38,11 +39,11 @@ public class FastApiClientService {
         }
     }
 
-    public String askCareerTitle(Long profileId) { //todo: profile API 구현 후 수정
+    public String askCareerTitle(Profile profile) { //todo: fast api 대로 수정
         try {
             return fastApiWebClient.post()
                     .uri(CAREER_TITLE_URL)
-                    .bodyValue(Map.of("id", profileId))
+                    .bodyValue(FastAPIRequestConverter.to(profile))
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, this::handleError)
                     .bodyToMono(String.class)

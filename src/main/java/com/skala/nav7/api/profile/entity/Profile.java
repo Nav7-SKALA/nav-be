@@ -1,6 +1,9 @@
 package com.skala.nav7.api.profile.entity;
 
+import com.skala.nav7.api.certification.memberCertification.entity.MemberCertification;
+import com.skala.nav7.api.experience.entity.Experience;
 import com.skala.nav7.api.member.entity.Member;
+import com.skala.nav7.api.project.entity.MemberProject;
 import com.skala.nav7.global.base.entity.SoftDeletableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,9 +12,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,13 +42,21 @@ public class Profile extends SoftDeletableEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     Member member;
-
     @Column(name = "career_year")
     Integer careerYear;
     @Column(name = "profile_img")
     String profileImage;
     @Column(name = "career_title")
     String careerTitle;
+    @Builder.Default
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+    private List<MemberProject> memberProjects = new ArrayList<>();
+    @Builder.Default
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+    private List<MemberCertification> memberCertifications = new ArrayList<>();
+    @Builder.Default
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+    private List<Experience> experiences = new ArrayList<>();
 
     public void editCareerYear(Integer careerYear) {
         this.careerYear = careerYear;
