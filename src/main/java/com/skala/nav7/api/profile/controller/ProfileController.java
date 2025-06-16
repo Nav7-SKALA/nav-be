@@ -41,14 +41,14 @@ public class ProfileController {
     }
 
     @Operation(
-            summary = "프로필 설정 후, career title 받아오기",
-            description = "fast api 서버에 career title을 요청합니다."
+            summary = "프로필 설정 후, career title, career summary 받아오기",
+            description = "fast api 서버에 career title, summary 을 요청합니다."
     )
-    @PutMapping(value = "/me/career-title")
+    @PutMapping(value = "/me/careers")
     public ApiResponse<?> getCareerTitle(
             @ProfileEntity Profile profile
     ) {
-        return ApiResponse.onSuccess(profileService.getCareerTitle(profile));
+        return ApiResponse.onSuccess(profileService.getCareers(profile));
     }
 
     @Operation(

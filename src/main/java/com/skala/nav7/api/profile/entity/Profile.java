@@ -38,7 +38,6 @@ public class Profile extends SoftDeletableEntity {
     @SequenceGenerator(name = "profile_seq", sequenceName = "profile_seq", allocationSize = 1)
     @Column(name = "profile_id", nullable = false)
     Long id;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     Member member;
@@ -48,6 +47,11 @@ public class Profile extends SoftDeletableEntity {
     String profileImage;
     @Column(name = "career_title")
     String careerTitle;
+    @Column(name = "career_summary")
+    String careerSummary;
+    @Builder.Default
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+    private List<ProfileSkillSet> profileSkillSets = new ArrayList<>();
     @Builder.Default
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
     private List<MemberProject> memberProjects = new ArrayList<>();
@@ -62,11 +66,19 @@ public class Profile extends SoftDeletableEntity {
         this.careerYear = careerYear;
     }
 
+    public void editProfileSkillSets(List<ProfileSkillSet> profileSkillSets) {
+        this.profileSkillSets = new ArrayList<>(profileSkillSets);
+    }
+
     public void editProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
 
     public void editCareerTitle(String careerTitle) {
         this.careerTitle = careerTitle;
+    }
+
+    public void editCareerSummary(String careerSummary) {
+        this.careerSummary = careerSummary;
     }
 }

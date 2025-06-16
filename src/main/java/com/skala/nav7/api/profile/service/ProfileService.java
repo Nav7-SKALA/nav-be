@@ -2,10 +2,17 @@ package com.skala.nav7.api.profile.service;
 
 import com.skala.nav7.api.profile.dto.request.ProfileRequestDTO;
 import com.skala.nav7.api.profile.entity.Profile;
+import com.skala.nav7.api.profile.entity.ProfileSkillSet;
 import com.skala.nav7.api.profile.error.ProfileErrorCode;
 import com.skala.nav7.api.profile.error.ProfileException;
 import com.skala.nav7.api.profile.repository.ProfileRepository;
+import com.skala.nav7.api.profile.repository.ProfileSkillSetRepository;
 import com.skala.nav7.api.session.service.FastApiClientService;
+import com.skala.nav7.api.skillset.entity.SkillSet;
+import com.skala.nav7.api.skillset.error.SkillSetErrorCode;
+import com.skala.nav7.api.skillset.error.SkillSetException;
+import com.skala.nav7.api.skillset.repository.SkillSetRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProfileService {
     private final ProfileRepository profileRepository;
     private final FastApiClientService fastApiClientService;
+    private final SkillSetRepository skillSetRepository;
+    private final ProfileSkillSetRepository profileSkillSetRepository;
 
     @Transactional
     public Profile initProfile(Profile profile, ProfileRequestDTO.DefaultInfoDTO request) {
@@ -22,7 +31,23 @@ public class ProfileService {
         Integer years = request.years();
         profile.editProfileImage(profileImg);
         profile.editCareerYear(years);
+        List<ProfileSkillSet> profileSkillSets = createProfileSkillSets(profile, request.skillSetIds());
+        profileSkillSetRepository.saveAll(profileSkillSets);
+        profile.editProfileSkillSets(profileSkillSets);
         return profileRepository.save(profile);
+    }
+
+    private List<ProfileSkillSet> createProfileSkillSets(Profile profile, List<Long> skillSetIds) {
+        return skillSetIds.stream()
+                .map(id -> {
+                    SkillSet skillSet = skillSetRepository.findById(id)
+                            .orElseThrow(() -> new SkillSetException(SkillSetErrorCode.SKILL_SET_NOT_FOUND));
+                    return ProfileSkillSet.builder()
+                            .profile(profile)
+                            .skillSet(skillSet)
+                            .build();
+                })
+                .toList();
     }
 
     @Transactional
@@ -36,11 +61,14 @@ public class ProfileService {
         return profileRepository.save(profile);
     }
 
-    public String getCareerTitle(Profile profile) {
+    @Transactional
+    public String getCareers(Profile profile) {
         Profile fetchProfile = profileRepository.findProfileWithAllInfo(profile.getId()).orElseThrow(
                 () -> new ProfileException(ProfileErrorCode.PROFILE_NOT_FOUND)
         );
-        return fastApiClientService.askCareerTitle(profile);
+        String careers = fastApiClientService.askCareerTitle(profile);
+        fetchProfile.editCareerSummary(careers);
+        return careers;
     }
 
 }
