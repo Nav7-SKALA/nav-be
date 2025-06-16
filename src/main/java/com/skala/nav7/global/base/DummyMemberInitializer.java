@@ -4,13 +4,20 @@ import com.skala.nav7.api.certification.entity.Certification;
 import com.skala.nav7.api.certification.memberCertification.entity.MemberCertification;
 import com.skala.nav7.api.certification.memberCertification.repository.MemberCertificationRepository;
 import com.skala.nav7.api.certification.repository.CertificationRepository;
+import com.skala.nav7.api.experience.entity.Experience;
+import com.skala.nav7.api.experience.repository.ExperienceRepository;
 import com.skala.nav7.api.member.entity.Gender;
 import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.member.repository.MemberRepository;
 import com.skala.nav7.api.profile.entity.Profile;
+import com.skala.nav7.api.profile.entity.ProfileSkillSet;
 import com.skala.nav7.api.profile.repository.ProfileRepository;
+import com.skala.nav7.api.profile.repository.ProfileSkillSetRepository;
+import com.skala.nav7.api.project.entity.MemberProject;
+import com.skala.nav7.api.project.entity.ProjectSize;
 import com.skala.nav7.api.project.entity.domain.Domain;
 import com.skala.nav7.api.project.repository.DomainRepository;
+import com.skala.nav7.api.project.repository.MemberProjectRepository;
 import com.skala.nav7.api.role.entity.Role;
 import com.skala.nav7.api.role.entity.RoleType;
 import com.skala.nav7.api.role.repository.RoleRepository;
@@ -37,6 +44,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DummyMemberInitializer {
     private final DomainRepository domainRepository;
+    private final ExperienceRepository experienceRepository;
     private final SessionMessageRepository sessionMessageRepository;
     private final CertificationRepository certificationRepository;
     private final MemberRepository memberRepository;
@@ -46,7 +54,9 @@ public class DummyMemberInitializer {
     private final RoleRepository roleRepository;
     private final SkillSetRepository skillSetRepository;
     private final JobRepository jobRepository;
+    private final MemberProjectRepository memberProjectRepository;
     private final MemberCertificationRepository memberCertificationRepository;
+    private final ProfileSkillSetRepository profileSkillSetRepository;
     private Member dummyMember;
 
     @PostConstruct
@@ -61,7 +71,10 @@ public class DummyMemberInitializer {
             initRoles();
             initJobsAndSkillSets();
             initCertifications();
+            initProjects(profile);
             initMemberCertifications(profile);
+            initExperiences(profile);
+            initProfileSkillSet(profile);
         }
     }
 
@@ -85,6 +98,15 @@ public class DummyMemberInitializer {
                 .build();
         profileRepository.save(profile);
         return profile;
+    }
+
+    private void initProfileSkillSet(Profile profile) {
+        ProfileSkillSet profileSkillSet = ProfileSkillSet.builder()
+                .profile(profile)
+                .skillSet(skillSetRepository.findById(1L).get())
+                .build();
+        profileSkillSetRepository.save(profileSkillSet);
+        profile.editProfileSkillSets(List.of(profileSkillSet));
     }
 
     private void initSession() {
@@ -275,6 +297,70 @@ public class DummyMemberInitializer {
                 roleRepository.save(role);
             }
         }
+    }
+
+    private void initProjects(Profile profile) {
+        List<Domain> domains = domainRepository.findAll();
+
+        MemberProject project1 = MemberProject.builder()
+                .profile(profile)
+                .domain(domains.get(0))
+                .projectName("물류 시스템 리뉴얼")
+                .projectDescribe("기존 WMS 시스템을 개선하고 물류 처리 속도를 30% 향상시킨 프로젝트입니다.")
+                .startYear(1)
+                .endYear(20)
+                .projectSize(ProjectSize.LARGE)
+                .isTurningPoint(true)
+                .build();
+
+        MemberProject project2 = MemberProject.builder()
+                .profile(profile)
+                .domain(domains.get(1))
+                .projectName("AI 기반 추천 시스템 개발")
+                .projectDescribe("머신러닝 모델을 적용해 개인화 추천 서비스를 제공한 경험입니다.")
+                .startYear(22)
+                .endYear(23)
+                .projectSize(ProjectSize.LARGE)
+                .isTurningPoint(false)
+                .build();
+
+        MemberProject project3 = MemberProject.builder()
+                .profile(profile)
+                .domain(domains.get(2))
+                .projectName("Spring 기반 사내 포털 개발")
+                .projectDescribe("Spring Boot, JPA 기반의 사내 인트라넷 시스템을 구축했습니다.")
+                .startYear(20)
+                .endYear(21)
+                .projectSize(ProjectSize.SMALL)
+                .isTurningPoint(false)
+                .build();
+
+        memberProjectRepository.saveAll(List.of(project1, project2, project3));
+    }
+
+    private void initExperiences(Profile profile) {
+        List<Experience> experiences = List.of(
+                Experience.builder()
+                        .profile(profile)
+                        .experienceName("Spring Boot 실무 교육 수료")
+                        .experienceDescribe("5주간의 백엔드 프레임워크 집중 교육 과정 이수")
+                        .experiencedAt(LocalDate.of(2022, 6, 1))
+                        .build(),
+                Experience.builder()
+                        .profile(profile)
+                        .experienceName("AWS SAA 자격증 취득")
+                        .experienceDescribe("클라우드 인프라 설계 및 운영 능력을 검증받음")
+                        .experiencedAt(LocalDate.of(2023, 3, 15))
+                        .build(),
+                Experience.builder()
+                        .profile(profile)
+                        .experienceName("사내 해커톤 우승")
+                        .experienceDescribe("4인 팀 프로젝트로 생성형 AI 기반 서비스 기획 및 구현")
+                        .experiencedAt(LocalDate.of(2024, 1, 10))
+                        .build()
+        );
+
+        experienceRepository.saveAll(experiences);
     }
 
     public Member getDummyMember() {
