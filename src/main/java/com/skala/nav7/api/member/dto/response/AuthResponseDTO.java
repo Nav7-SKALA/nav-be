@@ -1,5 +1,6 @@
 package com.skala.nav7.api.member.dto.response;
 
+import com.skala.nav7.api.member.entity.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record AuthResponseDTO(
@@ -11,7 +12,9 @@ public record AuthResponseDTO(
             @Schema(description = "profile 아이디", example = "1")
             Long profileId,
             @Schema(description = "사용자의 이름", example = "김나비")
-            String memberName
+            String memberName,
+            @Schema(description = "사용자의 성별", example = "FEMALE")
+            Gender gender
     ) {
     }
 }
