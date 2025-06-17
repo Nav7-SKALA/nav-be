@@ -32,7 +32,7 @@ public class MemberProjectService {
 
     @Transactional
     public MemberProject createNewProject(Profile profile, List<Role> roles, Domain domain, List<SkillSet> skillSets,
-                                          ProjectRequestDTO.CreateProjectDTO dto) {
+                                          ProjectRequestDTO.CreateProjectDetailDTO dto) {
         MemberProject memberProject = MemberProject.builder()
                 .projectDescribe(dto.projectDescribe())
                 .projectName(dto.projectName())
