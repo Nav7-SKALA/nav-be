@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,15 +51,17 @@ public class ExperienceController {
             description = "새 경험을 만듭니다."
     )
     @PostMapping(value = "/me/experience")
-    public ResponseEntity<ApiResponse<ExperienceResponseDTO.DefaultInfoDTO>> createExperience(
+    public ResponseEntity<ApiResponse<List<ExperienceResponseDTO.DefaultInfoDTO>>> createExperience(
             @ProfileEntity Profile profile,
-            @RequestBody @Valid ExperienceRequestDTO.CreateExperienceDTO request
+            @RequestBody @Valid ExperienceRequestDTO.CreateExperiencesRequestDTO request
     ) {
-        Experience experience = experienceService.createNewExperience(profile, request);
+        List<Experience> experience = request.experiences().stream()
+                .map(dto -> experienceService.createNewExperience(profile, dto))
+                .toList();
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.of(ExperienceSuccessCode.EXPERIENCE_CREATED,
-                        ExperienceConverter.to(experience)));
+                        experience.stream().map(ExperienceConverter::to).toList()));
     }
 
     @Operation(
