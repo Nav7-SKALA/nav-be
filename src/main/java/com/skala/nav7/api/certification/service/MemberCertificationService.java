@@ -52,6 +52,9 @@ public class MemberCertificationService {
     public MemberCertification createNewMemberCertification(Profile profile,
                                                             MemberCertificationRequestDTO.CreateCertificationDTO dto,
                                                             Certification certification) {
+        if (memberCertificationRepository.existsByProfileAndCertification(profile, certification)) {
+            throw new CertificationException(CertificationErrorCode.ALREADY_EXIST_CERTIFICATION);
+        }
         MemberCertification memberCertification = MemberCertification.builder()
                 .certification(certification)
                 .acquisitionDate(dto.acquisitionDate())

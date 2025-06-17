@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,11 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Table(name = "member_certification")
+@Table(name = "member_certification",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_profile_certification",
+                columnNames = {"profile_id", "certification_id"}
+        ))
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MemberCertification {
 
