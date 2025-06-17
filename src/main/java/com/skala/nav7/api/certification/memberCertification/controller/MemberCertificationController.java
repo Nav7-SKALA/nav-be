@@ -14,6 +14,7 @@ import com.skala.nav7.global.auth.jwt.annotation.ProfileEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,11 +57,17 @@ public class MemberCertificationController {
     @PostMapping("/me/certifications")
     public ResponseEntity<ApiResponse<?>> createNewMemberCertification(
             @ProfileEntity Profile profile,
-            @Parameter(description = "사용자 자격증 정보") @RequestBody MemberCertificationRequestDTO.CreateCertificationDTO request
+            @Parameter(description = "사용자 자격증 정보") @RequestBody MemberCertificationRequestDTO.CreateCertificationsRequestDTO request
     ) {
-        Certification certification = certificationService.getCertification(request.certificationId());
-        MemberCertification memberCertification = memberCertificationService.createNewMemberCertification(profile,
-                request, certification);
+        List<MemberCertification> memberCertifications = request.experiences()
+                .stream()
+                .map(experienceDto -> {
+                    Certification certification = certificationService.getCertification(
+                            experienceDto.certificationId());
+                    return memberCertificationService.createNewMemberCertification(profile, experienceDto,
+                            certification);
+                })
+                .toList();
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.onSuccess(CertificationSuccessCode.CERTIFICATION_CREATED));
