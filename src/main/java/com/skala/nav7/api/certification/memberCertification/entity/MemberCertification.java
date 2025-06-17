@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
@@ -34,8 +35,9 @@ import lombok.experimental.FieldDefaults;
 public class MemberCertification {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "membercertification_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_certification_seq")
+    @SequenceGenerator(name = "member_certification_seq", sequenceName = "member_certification_seq", allocationSize = 1)
+    @Column(name = "member_certification_id")
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -25,7 +25,7 @@ import lombok.experimental.FieldDefaults;
 public class Domain extends SoftDeletableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "domain_seq")
-    @SequenceGenerator(name = "profile_seq", sequenceName = "domain_seq", allocationSize = 1)
+    @SequenceGenerator(name = "domain_seq", sequenceName = "domain_seq", allocationSize = 1)
     @Column(name = "domain_id")
     Long id;
 
