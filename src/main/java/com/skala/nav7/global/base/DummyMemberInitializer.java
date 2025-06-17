@@ -10,14 +10,14 @@ import com.skala.nav7.api.member.entity.Gender;
 import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.member.repository.MemberRepository;
 import com.skala.nav7.api.profile.entity.Profile;
-import com.skala.nav7.api.profile.entity.ProfileSkillSet;
 import com.skala.nav7.api.profile.repository.ProfileRepository;
-import com.skala.nav7.api.profile.repository.ProfileSkillSetRepository;
+import com.skala.nav7.api.profile.repository.ProfileRoleRepository;
 import com.skala.nav7.api.project.entity.MemberProject;
 import com.skala.nav7.api.project.entity.ProjectSize;
 import com.skala.nav7.api.project.entity.domain.Domain;
 import com.skala.nav7.api.project.repository.DomainRepository;
 import com.skala.nav7.api.project.repository.MemberProjectRepository;
+import com.skala.nav7.api.role.entity.ProfileRole;
 import com.skala.nav7.api.role.entity.Role;
 import com.skala.nav7.api.role.entity.RoleType;
 import com.skala.nav7.api.role.repository.RoleRepository;
@@ -56,7 +56,7 @@ public class DummyMemberInitializer {
     private final JobRepository jobRepository;
     private final MemberProjectRepository memberProjectRepository;
     private final MemberCertificationRepository memberCertificationRepository;
-    private final ProfileSkillSetRepository profileSkillSetRepository;
+    private final ProfileRoleRepository profileRoleRepository;
     private Member dummyMember;
 
     @PostConstruct
@@ -101,12 +101,12 @@ public class DummyMemberInitializer {
     }
 
     private void initProfileSkillSet(Profile profile) {
-        ProfileSkillSet profileSkillSet = ProfileSkillSet.builder()
+        ProfileRole profileRole = ProfileRole.builder()
                 .profile(profile)
-                .skillSet(skillSetRepository.findById(1L).get())
+                .role(roleRepository.findById(1L).get())
                 .build();
-        profileSkillSetRepository.save(profileSkillSet);
-        profile.editProfileSkillSets(List.of(profileSkillSet));
+        profileRoleRepository.save(profileRole);
+        profile.editProfileRoles(List.of(profileRole));
     }
 
     private void initSession() {

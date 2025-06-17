@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,8 @@ import lombok.experimental.FieldDefaults;
 public class Certification {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "certification_seq")
+    @SequenceGenerator(name = "certification_seq", sequenceName = "certification_seq", allocationSize = 1)
     @Column(name = "certification_id")
     Long id;
 

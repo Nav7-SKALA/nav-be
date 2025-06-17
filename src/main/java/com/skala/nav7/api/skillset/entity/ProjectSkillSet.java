@@ -25,12 +25,12 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "member_skill_set")
+@Table(name = "project_skill_set")
 public class ProjectSkillSet extends SoftDeletableEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_skill_set_seq")
-    @SequenceGenerator(name = "member_skill_set_seq", sequenceName = "member_skill_set_seq", allocationSize = 1)
-    @Column(name = "member_skillset_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_skill_set_seq")
+    @SequenceGenerator(name = "project_skill_set_seq", sequenceName = "project_skill_set_seq", allocationSize = 1)
+    @Column(name = "project_skillset_id")
     Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "skillset_id", nullable = false)
