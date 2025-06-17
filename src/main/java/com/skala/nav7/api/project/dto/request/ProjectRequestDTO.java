@@ -97,7 +97,6 @@ public record ProjectRequestDTO(
     @Schema(description = "프로젝트 여러 개 생성 요청 DTO")
     public record CreateProjectsRequestDTO(
             @Valid
-            @Size(min = 0, max = 5, message = "프로젝트는 0개 이상 5개 이하로 입력해주세요.")
             @Schema(description = "생성할 프로젝트 목록")
             List<ProjectRequestDTO.CreateProjectDetailDTO> projects
     ) {
