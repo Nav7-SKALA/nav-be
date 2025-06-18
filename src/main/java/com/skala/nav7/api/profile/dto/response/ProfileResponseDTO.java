@@ -17,19 +17,24 @@ public record ProfileResponseDTO(
             String careerTitle,
             @Schema(description = "프로필 이미지", example = "sample.png")
             String profileImg,
-            @Schema(description = "역할 List")
-            List<RoleInfoDTO> roleInfos
+            @Schema(description = "Skill Set List")
+            List<SkillInfoDTO> skillInfos
 
     ) {
     }
 
     @Builder
-    @Schema(description = "Profile Role 응답 DTO")
-    public record RoleInfoDTO(
-            @Schema(description = "Role 아이디", example = "1")
-            Long RoleId,
-            @Schema(description = "Role 이름", example = "Frontend.Dev")
-            String roleName
+    @Schema(description = "Skill Set 응답 DTO")
+    public record SkillInfoDTO(
+            @Schema(description = "Skill Set 아이디", example = "1")
+            Long skillSetId,
+            @Schema(description = "job 아이디", example = "1")
+            Long jobId,
+            @Schema(description = "Skill Set 이름", example = "지능화 Eng.")
+            String skillSetName,
+            @Schema(description = "Skill Set 코드", example = "S-6")
+            String skillCode
     ) {
     }
+
 }

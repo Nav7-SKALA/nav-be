@@ -9,8 +9,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum SkillSetErrorCode implements BaseErrorCode {
-    SKILL_SET_NOT_FOUND(HttpStatus.NOT_FOUND, "ROLE_ID404", "해당하는 Skill Set 이 아닙니다. "),
-    SKILL_SET_ID_INVALID(HttpStatus.BAD_REQUEST, "ROLE_ID400", "잘못된 Skill Set Id 입니다."),
+    PROFILE_SKILL_SET_DUPLICATED(HttpStatus.NOT_FOUND, "PROFILE_SKILL_SET409", "해당하는 Skill Set 이 이미 프로필에 존재합니다. "),
+    SKILL_SET_NOT_FOUND(HttpStatus.NOT_FOUND, "SKILL_SET404", "해당하는 Skill Set 이 아닙니다. "),
+    SKILL_SET_ID_INVALID(HttpStatus.BAD_REQUEST, "SKILL_SET400", "잘못된 Skill Set Id 입니다."),
     ;
     private final HttpStatus status;
     private final String code;

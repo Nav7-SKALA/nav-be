@@ -11,13 +11,11 @@ import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.member.repository.MemberRepository;
 import com.skala.nav7.api.profile.entity.Profile;
 import com.skala.nav7.api.profile.repository.ProfileRepository;
-import com.skala.nav7.api.profile.repository.ProfileRoleRepository;
 import com.skala.nav7.api.project.entity.MemberProject;
 import com.skala.nav7.api.project.entity.ProjectSize;
 import com.skala.nav7.api.project.entity.domain.Domain;
 import com.skala.nav7.api.project.repository.DomainRepository;
 import com.skala.nav7.api.project.repository.MemberProjectRepository;
-import com.skala.nav7.api.role.entity.ProfileRole;
 import com.skala.nav7.api.role.entity.Role;
 import com.skala.nav7.api.role.entity.RoleType;
 import com.skala.nav7.api.role.repository.RoleRepository;
@@ -26,8 +24,10 @@ import com.skala.nav7.api.session.entity.SessionMessage;
 import com.skala.nav7.api.session.repository.SessionMessageRepository;
 import com.skala.nav7.api.session.repository.SessionRepository;
 import com.skala.nav7.api.skillset.entity.Job;
+import com.skala.nav7.api.skillset.entity.ProfileSkillSet;
 import com.skala.nav7.api.skillset.entity.SkillSet;
 import com.skala.nav7.api.skillset.repository.JobRepository;
+import com.skala.nav7.api.skillset.repository.ProfileSkillSetRepository;
 import com.skala.nav7.api.skillset.repository.SkillSetRepository;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
@@ -56,7 +56,7 @@ public class DummyMemberInitializer {
     private final JobRepository jobRepository;
     private final MemberProjectRepository memberProjectRepository;
     private final MemberCertificationRepository memberCertificationRepository;
-    private final ProfileRoleRepository profileRoleRepository;
+    private final ProfileSkillSetRepository profileSkillSetRepository;
     private Member dummyMember;
 
     @PostConstruct
@@ -101,12 +101,12 @@ public class DummyMemberInitializer {
     }
 
     private void initProfileSkillSet(Profile profile) {
-        ProfileRole profileRole = ProfileRole.builder()
+        ProfileSkillSet profileSkillSet = ProfileSkillSet.builder()
                 .profile(profile)
-                .role(roleRepository.findById(1L).get())
+                .skillSet(skillSetRepository.findById(1L).get())
                 .build();
-        profileRoleRepository.save(profileRole);
-        profile.editProfileRoles(List.of(profileRole));
+        profileSkillSetRepository.save(profileSkillSet);
+        profile.editProfileSkillSets(List.of(profileSkillSet));
     }
 
     private void initSession() {
