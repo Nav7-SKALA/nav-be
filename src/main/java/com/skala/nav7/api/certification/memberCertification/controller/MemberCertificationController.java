@@ -59,7 +59,7 @@ public class MemberCertificationController {
             @ProfileEntity Profile profile,
             @Parameter(description = "사용자 자격증 정보") @RequestBody MemberCertificationRequestDTO.CreateCertificationsRequestDTO request
     ) {
-        List<MemberCertification> memberCertifications = request.experiences()
+        List<MemberCertification> memberCertifications = request.certifications()
                 .stream()
                 .map(experienceDto -> {
                     Certification certification = certificationService.getCertification(

@@ -6,6 +6,7 @@ import com.skala.nav7.api.certification.error.CertificationErrorCode;
 import com.skala.nav7.api.certification.error.CertificationException;
 import com.skala.nav7.api.certification.repository.CertificationRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CertificationService {
     private final CertificationRepository certificationRepository;
+
+    public List<DefaultInfoDTO> getAllCertifications() {
+        return certificationRepository.findAll().stream()
+                .map(cer -> new DefaultInfoDTO(cer.getId(), cer.getCertificationName())).collect(Collectors.toList());
+    }
 
     public List<DefaultInfoDTO> searchCertifications(String query) {
         List<Certification> certifications = certificationRepository.findByCertificationNameContainingIgnoreCase(query);

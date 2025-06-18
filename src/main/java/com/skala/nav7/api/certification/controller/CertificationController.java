@@ -34,6 +34,13 @@ public class CertificationController {
         return ApiResponse.onSuccess(certificationService.searchCertifications(query));
     }
 
+    @Operation(summary = "자격증 전체 목록 불러오기", description = "전체 자격증 리스트를 반환합니다.")
+    @GetMapping("")
+    public ApiResponse<List<DefaultInfoDTO>> getcertifications(
+    ) {
+        return ApiResponse.onSuccess(certificationService.getAllCertifications());
+    }
+
     @Operation(
             summary = "자격증 추가",
             description = "새로운 자격증을 마스터 테이블에 추가합니다."

@@ -21,7 +21,7 @@ public record MemberCertificationRequestDTO() {
     public record CreateCertificationsRequestDTO(
             @Valid
             @Schema(description = "생성할 자격증 목록")
-            List<CreateCertificationDTO> experiences
+            List<CreateCertificationDTO> certifications
     ) {
     }
 }
