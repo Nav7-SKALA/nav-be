@@ -1,6 +1,7 @@
 package com.skala.nav7.api.rolemodel.entity;
 
 import com.skala.nav7.api.profile.entity.Profile;
+import com.skala.nav7.global.base.entity.SoftDeletableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,8 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,27 +26,17 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "rolemodel")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RoleModel {
-
+public class RoleModel extends SoftDeletableEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_model_seq")
+    @SequenceGenerator(name = "profile_role_seq", sequenceName = "role_model_seq", allocationSize = 1)
     @Column(name = "rolemodel_id")
     Long id;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)
     Profile profile;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rolemodel_profile_id", nullable = false)
-    Profile rolemodelProfile;
-
     @Column(name = "rolemodel_name", nullable = false)
-    String name;
-
+    String roleModelName;
     @Column(name = "rolemodel_img", nullable = false)
-    String image;
-
-    @Column(name = "created_at", nullable = false)
-    LocalDateTime createdAt;
+    String roleModelImg;
 }
