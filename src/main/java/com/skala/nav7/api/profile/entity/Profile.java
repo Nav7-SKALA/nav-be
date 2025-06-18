@@ -4,7 +4,7 @@ import com.skala.nav7.api.certification.memberCertification.entity.MemberCertifi
 import com.skala.nav7.api.experience.entity.Experience;
 import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.project.entity.MemberProject;
-import com.skala.nav7.api.role.entity.ProfileRole;
+import com.skala.nav7.api.skillset.entity.ProfileSkillSet;
 import com.skala.nav7.global.base.entity.SoftDeletableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,9 +50,8 @@ public class Profile extends SoftDeletableEntity {
     String careerTitle;
     @Column(name = "career_summary")
     String careerSummary;
-    @Builder.Default
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
-    private List<ProfileRole> profileRoles = new ArrayList<>();
+    private List<ProfileSkillSet> profileSkillSets = new ArrayList<>();
     @Builder.Default
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
     private List<MemberProject> memberProjects = new ArrayList<>();
@@ -67,8 +66,8 @@ public class Profile extends SoftDeletableEntity {
         this.careerYear = careerYear;
     }
 
-    public void editProfileRoles(List<ProfileRole> profileRoles) {
-        this.profileRoles = new ArrayList<>(profileRoles);
+    public void editProfileSkillSets(List<ProfileSkillSet> profileSkillSets) {
+        this.profileSkillSets = new ArrayList<>(profileSkillSets);
     }
 
     public void editProfileImage(String profileImage) {
