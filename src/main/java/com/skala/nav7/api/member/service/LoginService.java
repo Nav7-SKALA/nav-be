@@ -42,7 +42,8 @@ public class LoginService {
         ResponseCookie refresh = cookieService.createCookie(AuthConstant.REFRESH_TOKEN.getValue(), id);
         setAuthentication(access.getValue());
         setResponse(response, access, refresh);
-        return new LoginInfoDTO(member.getId(), member.getProfile().getId(), member.getMemberName());
+        return new LoginInfoDTO(member.getId(), member.getProfile().getId(), member.getMemberName(),
+                member.getGender());
     }
 
     public void setAuthentication(String accessToken) {
