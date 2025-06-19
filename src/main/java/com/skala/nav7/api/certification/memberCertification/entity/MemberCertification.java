@@ -13,7 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,5 +49,5 @@ public class MemberCertification {
     Certification certification;
 
     @Column(name = "acquisition_date", nullable = false)
-    LocalDate acquisitionDate; //습득 날짜
+    YearMonth acquisitionDate; //습득 날짜
 }

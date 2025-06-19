@@ -12,7 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,7 +43,7 @@ public class Experience extends SoftDeletableEntity {
     @Column(name = "experience_describe")
     String experienceDescribe;
     @Column(name = "experienced_at")
-    LocalDate experiencedAt;
+    YearMonth experiencedAt;
 
     public void updateExperienceName(String experienceName) {
         this.experienceName = experienceName;
@@ -53,7 +53,7 @@ public class Experience extends SoftDeletableEntity {
         this.experienceDescribe = experienceDescribe;
     }
 
-    public void updateExperiencedAt(LocalDate experiencedAt) {
+    public void updateExperiencedAt(YearMonth experiencedAt) {
         this.experiencedAt = experiencedAt;
     }
 }

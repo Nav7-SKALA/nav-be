@@ -30,8 +30,8 @@ import com.skala.nav7.api.skillset.repository.JobRepository;
 import com.skala.nav7.api.skillset.repository.ProfileSkillSetRepository;
 import com.skala.nav7.api.skillset.repository.SkillSetRepository;
 import jakarta.annotation.PostConstruct;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -169,7 +169,7 @@ public class DummyMemberInitializer {
     }
 
     private void initMemberCertifications(Profile profile) {
-        LocalDate baseDate = LocalDate.of(2023, 1, 1);
+        YearMonth baseDate = YearMonth.of(2023, 1);
 
         for (int i = 1; i <= 10; i++) {
             MemberCertification memberCert = MemberCertification.builder()
@@ -344,19 +344,19 @@ public class DummyMemberInitializer {
                         .profile(profile)
                         .experienceName("Spring Boot 실무 교육 수료")
                         .experienceDescribe("5주간의 백엔드 프레임워크 집중 교육 과정 이수")
-                        .experiencedAt(LocalDate.of(2022, 6, 1))
+                        .experiencedAt(YearMonth.of(2022, 6))
                         .build(),
                 Experience.builder()
                         .profile(profile)
                         .experienceName("AWS SAA 자격증 취득")
                         .experienceDescribe("클라우드 인프라 설계 및 운영 능력을 검증받음")
-                        .experiencedAt(LocalDate.of(2023, 3, 15))
+                        .experiencedAt(YearMonth.of(2023, 3))
                         .build(),
                 Experience.builder()
                         .profile(profile)
                         .experienceName("사내 해커톤 우승")
                         .experienceDescribe("4인 팀 프로젝트로 생성형 AI 기반 서비스 기획 및 구현")
-                        .experiencedAt(LocalDate.of(2024, 1, 10))
+                        .experiencedAt(YearMonth.of(2024, 1))
                         .build()
         );
 

@@ -1,7 +1,7 @@
 package com.skala.nav7.api.experience.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import lombok.Builder;
 
 public record ExperienceResponseDTO() {
@@ -18,7 +18,7 @@ public record ExperienceResponseDTO() {
             String experienceDescribe,
 
             @Schema(description = "경험 년도", example = "2022.05")
-            LocalDate experiencedAt
+            YearMonth experiencedAt
 
     ) {
     }

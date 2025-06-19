@@ -9,7 +9,7 @@ import com.skala.nav7.api.experience.error.ExperienceException;
 import com.skala.nav7.api.experience.repository.ExperienceRepository;
 import com.skala.nav7.api.profile.entity.Profile;
 import com.skala.nav7.global.apiPayload.pagenation.PageResponse;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -63,7 +63,7 @@ public class ExperienceService {
 
         // 경험 날짜 수정
         if (request.experiencedAt().isPresent()) {
-            LocalDate newDate = request.experiencedAt().get();
+            YearMonth newDate = request.experiencedAt().get();
             experience.updateExperiencedAt(newDate);
         }
 

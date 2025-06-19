@@ -1,7 +1,7 @@
 package com.skala.nav7.api.session.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import lombok.Builder;
 
@@ -105,7 +105,7 @@ public record FastAPIRequestDTO(
             String experienceDescribe,
 
             @Schema(description = "경험 년도", example = "2022.05")
-            LocalDate experiencedAt
+            YearMonth experiencedAt
     ) {
     }
 }

@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,9 +21,9 @@ public record ExperienceRequestDTO(
             @Schema(description = "경험 설명", example = "AWS SUMMIT 참여했다! 재밌었다.")
             String experienceDescribe,
 
-            @NotNull(message = "경험한 년도를 입력해주세요.")
-            @Schema(description = "경험 년도", example = "2022-05-01")
-            LocalDate experiencedAt
+            @NotNull(message = "경험한 년월을 입력해주세요.")
+            @Schema(description = "경험 년월", example = "2022-05")
+            YearMonth experiencedAt
     ) {
     }
 
@@ -36,7 +36,7 @@ public record ExperienceRequestDTO(
             @Schema(description = "경험 설명", example = "AWS SUMMIT 참여했다! 재밌었다.")
             Optional<String> experienceDescribe,
             @Schema(description = "경험 년도", example = "2022-05-01")
-            Optional<LocalDate> experiencedAt
+            Optional<YearMonth> experiencedAt
     ) {
     }
 
