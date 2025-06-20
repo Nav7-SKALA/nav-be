@@ -95,6 +95,7 @@ public class DummyMemberInitializer {
                 .member(dummyMember)
                 .careerTitle("백엔드 개발자")
                 .careerYear(2)
+                .careerSummary("이 개발자는 2년 전부터 백엔드를 해왔으며, 최근에는 인프라로 확장중입니다.")
                 .build();
         profileRepository.save(profile);
         return profile;
