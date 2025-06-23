@@ -77,6 +77,12 @@ public class SessionService {
         return SessionConverter.to(session.getId());
     }
 
+    public SessionResponseDTO.newSessionDTO createNewRoleModelSessions(Member member) {
+        Session session = Session.builder().member(member).sessionTitle("롤모델과의 대화").build();
+        sessionRepository.save(session);
+        return SessionConverter.to(session.getId());
+    }
+
     private HashMap<String, Object> getSessionMessage(Long profileId, String question,
                                                       String sessionId) {
         FastAPIResponseDTO response = fastApiClientService.askCareerPath(profileId, question,

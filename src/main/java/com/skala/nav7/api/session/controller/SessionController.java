@@ -33,6 +33,18 @@ public class SessionController {
     private final SessionService sessionService;
 
     @Operation(
+            summary = "롤모델 Session 생성",
+            description = "롤모델의 카드 생성시, 새로운 세션을 만들 때 사용하는 API 입니다."
+    )
+    @PostMapping(value = "/rolemodels")
+    public ApiResponse<SessionResponseDTO.newSessionDTO> createNewRolModelSession(
+            @MemberEntity Member member
+    ) {
+        return ApiResponse.onSuccess(
+                sessionService.createNewRoleModelSessions(member));
+    }
+
+    @Operation(
             summary = "Session 생성",
             description = "새로운 세션, 즉 첫 메세지를 보낼 때 사용하는 API 입니다."
     )
