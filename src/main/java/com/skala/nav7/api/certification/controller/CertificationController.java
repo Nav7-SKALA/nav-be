@@ -36,7 +36,7 @@ public class CertificationController {
 
     @Operation(summary = "자격증 전체 목록 불러오기", description = "전체 자격증 리스트를 반환합니다.")
     @GetMapping("")
-    public ApiResponse<List<DefaultInfoDTO>> getcertifications(
+    public ApiResponse<List<DefaultInfoDTO>> getCertifications(
     ) {
         return ApiResponse.onSuccess(certificationService.getAllCertifications());
     }
