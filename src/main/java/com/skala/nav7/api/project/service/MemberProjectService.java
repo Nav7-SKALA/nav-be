@@ -69,6 +69,13 @@ public class MemberProjectService {
         return memberProject;
     }
 
+    public List<ProjectResponseDTO.DefaultInfoDTO> getProjects(Profile profile) {
+        List<MemberProject> projectPage = memberProjectRepository.findAllByProfileOrderByStartYearAsc(profile);
+        return projectPage.stream()
+                .map(ProjectConverter::to)
+                .toList();
+    }
+
     public PageResponse<ProjectResponseDTO.DefaultInfoDTO> getPaginatedProjects(Profile profile, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(START_YEAR).ascending());
         Page<MemberProject> projectPage = memberProjectRepository.findAllByProfile(profile, pageRequest);

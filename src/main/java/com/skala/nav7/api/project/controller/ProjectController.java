@@ -39,6 +39,17 @@ public class ProjectController {
             summary = "내 프로젝트 불러오기",
             description = "내 프로젝트 전체를 불러옵니다."
     )
+    @GetMapping(value = "/profiles/me/projects/all")
+    public ApiResponse<?> getProjects(
+            @ProfileEntity Profile profile
+    ) {
+        return ApiResponse.onSuccess(projectService.getProjects(profile));
+    }
+
+    @Operation(
+            summary = "내 프로젝트 불러오기 - 페이지네이션",
+            description = "내 프로젝트 전체를 불러옵니다."
+    )
     @GetMapping(value = "/profiles/me/projects")
     public ApiResponse<?> getProjects(
             @ProfileEntity Profile profile,

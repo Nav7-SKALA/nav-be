@@ -16,8 +16,10 @@ import com.skala.nav7.api.project.entity.ProjectSize;
 import com.skala.nav7.api.project.entity.domain.Domain;
 import com.skala.nav7.api.project.repository.DomainRepository;
 import com.skala.nav7.api.project.repository.MemberProjectRepository;
+import com.skala.nav7.api.role.entity.ProjectRole;
 import com.skala.nav7.api.role.entity.Role;
 import com.skala.nav7.api.role.entity.RoleType;
+import com.skala.nav7.api.role.repository.ProjectRoleRepository;
 import com.skala.nav7.api.role.repository.RoleRepository;
 import com.skala.nav7.api.session.entity.Session;
 import com.skala.nav7.api.session.entity.SessionMessage;
@@ -25,9 +27,11 @@ import com.skala.nav7.api.session.repository.SessionMessageRepository;
 import com.skala.nav7.api.session.repository.SessionRepository;
 import com.skala.nav7.api.skillset.entity.Job;
 import com.skala.nav7.api.skillset.entity.ProfileSkillSet;
+import com.skala.nav7.api.skillset.entity.ProjectSkillSet;
 import com.skala.nav7.api.skillset.entity.SkillSet;
 import com.skala.nav7.api.skillset.repository.JobRepository;
 import com.skala.nav7.api.skillset.repository.ProfileSkillSetRepository;
+import com.skala.nav7.api.skillset.repository.ProjectSkillSetRepository;
 import com.skala.nav7.api.skillset.repository.SkillSetRepository;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
@@ -43,6 +47,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DummyMemberInitializer {
+    private final ProjectSkillSetRepository projectSkillSetRepository;
+    private final ProjectRoleRepository projectRoleRepository;
     private final DomainRepository domainRepository;
     private final ExperienceRepository experienceRepository;
     private final SessionMessageRepository sessionMessageRepository;
@@ -75,6 +81,8 @@ public class DummyMemberInitializer {
             initMemberCertifications(profile);
             initExperiences(profile);
             initProfileSkillSet(profile);
+            initProjectRoles(profile);
+            initProjectSkillSets(profile);
         }
     }
 
@@ -337,6 +345,88 @@ public class DummyMemberInitializer {
                 .build();
 
         memberProjectRepository.saveAll(List.of(project1, project2, project3));
+    }
+
+    private void initProjectSkillSets(Profile profile) {
+        List<MemberProject> memberProjects = memberProjectRepository.findAllByProfileOrderByStartYearAsc(profile);
+
+        if (memberProjects.isEmpty()) {
+            return;
+        }
+
+        // 각 프로젝트별로 스킬셋 할당 (SkillSet ID 1, 2, 3 사용)
+        List<ProjectSkillSet> projectSkillSets = List.of(
+                // 물류 시스템 리뉴얼 프로젝트 - SkillSet ID 1, 2 (백엔드 관련)
+                ProjectSkillSet.builder()
+                        .memberProject(memberProjects.get(0))
+                        .skillSet(skillSetRepository.findById(1L).get())
+                        .build(),
+                ProjectSkillSet.builder()
+                        .memberProject(memberProjects.get(0))
+                        .skillSet(skillSetRepository.findById(2L).get())
+                        .build(),
+
+                // AI 기반 추천 시스템 개발 - SkillSet ID 2, 3 (백엔드, 모바일)
+                ProjectSkillSet.builder()
+                        .memberProject(memberProjects.get(1))
+                        .skillSet(skillSetRepository.findById(2L).get())
+                        .build(),
+                ProjectSkillSet.builder()
+                        .memberProject(memberProjects.get(1))
+                        .skillSet(skillSetRepository.findById(3L).get())
+                        .build(),
+
+                // Spring 기반 사내 포털 개발 - SkillSet ID 1, 2 (프론트엔드, 백엔드)
+                ProjectSkillSet.builder()
+                        .memberProject(memberProjects.get(2))
+                        .skillSet(skillSetRepository.findById(1L).get())
+                        .build(),
+                ProjectSkillSet.builder()
+                        .memberProject(memberProjects.get(2))
+                        .skillSet(skillSetRepository.findById(2L).get())
+                        .build()
+        );
+
+        projectSkillSetRepository.saveAll(projectSkillSets);
+    }
+
+    private void initProjectRoles(Profile profile) {
+        List<MemberProject> memberProjects = memberProjectRepository.findAllByProfileOrderByStartYearAsc(profile);
+
+        if (memberProjects.isEmpty()) {
+            return;
+        }
+
+        // 각 프로젝트별로 역할 할당 (Role ID 1, 2, 3 사용)
+        List<ProjectRole> projectRoles = List.of(
+                // 물류 시스템 리뉴얼 프로젝트 - Role ID 1, 2
+                ProjectRole.builder()
+                        .memberProject(memberProjects.get(0))
+                        .role(roleRepository.findById(1L).get())
+                        .build(),
+                ProjectRole.builder()
+                        .memberProject(memberProjects.get(0))
+                        .role(roleRepository.findById(2L).get())
+                        .build(),
+
+                // AI 기반 추천 시스템 개발 - Role ID 1, 3
+                ProjectRole.builder()
+                        .memberProject(memberProjects.get(1))
+                        .role(roleRepository.findById(1L).get())
+                        .build(),
+                ProjectRole.builder()
+                        .memberProject(memberProjects.get(1))
+                        .role(roleRepository.findById(3L).get())
+                        .build(),
+
+                // Spring 기반 사내 포털 개발 - Role ID 1
+                ProjectRole.builder()
+                        .memberProject(memberProjects.get(2))
+                        .role(roleRepository.findById(1L).get())
+                        .build()
+        );
+
+        projectRoleRepository.saveAll(projectRoles);
     }
 
     private void initExperiences(Profile profile) {
