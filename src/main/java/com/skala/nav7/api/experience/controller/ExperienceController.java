@@ -37,6 +37,17 @@ public class ExperienceController {
             summary = "내 경험 불러오기",
             description = "내 경험 전체를 불러옵니다."
     )
+    @GetMapping(value = "/me/experiences/all")
+    public ApiResponse<?> getExperience(
+            @ProfileEntity Profile profile
+    ) {
+        return ApiResponse.onSuccess(experienceService.getExperiences(profile));
+    }
+
+    @Operation(
+            summary = "내 경험 불러오기 - 페이지네이션",
+            description = "내 경험 전체를 불러옵니다."
+    )
     @GetMapping(value = "/me/experiences")
     public ApiResponse<?> getExperience(
             @ProfileEntity Profile profile,

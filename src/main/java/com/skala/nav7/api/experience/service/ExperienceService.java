@@ -24,6 +24,13 @@ public class ExperienceService {
     private final ExperienceRepository experienceRepository;
     private static final String EXPERIENCE_AT = "experiencedAt";
 
+    public List<ExperienceResponseDTO.DefaultInfoDTO> getExperiences(Profile profile) {
+        List<Experience> experiences = experienceRepository.findAllByProfileOrderByExperiencedAtAsc(profile);
+        return experiences.stream()
+                .map(ExperienceConverter::to)
+                .toList();
+    }
+
     public PageResponse<ExperienceResponseDTO.DefaultInfoDTO> getPaginatedExperience(Profile profile, int page,
                                                                                      int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(EXPERIENCE_AT).ascending());
