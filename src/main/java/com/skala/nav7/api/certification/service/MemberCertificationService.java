@@ -23,8 +23,17 @@ public class MemberCertificationService {
     private final MemberCertificationRepository memberCertificationRepository;
     private static final String ACQUISITION_DATE = "acquisitionDate";
 
-    public PageResponse<MemberCertificationResponseDTO.DefaultInfoDTO> getMemberCertifications(Profile profile,
-                                                                                               int page, int size) {
+    public List<MemberCertificationResponseDTO.DefaultInfoDTO> getMemberCertifications(Profile profile) {
+        List<MemberCertification> certifications = memberCertificationRepository.findAllByProfileOrderByAcquisitionDateAsc(
+                profile);
+        return certifications.stream()
+                .map(CertificationConverter::to)
+                .toList();
+    }
+
+    public PageResponse<MemberCertificationResponseDTO.DefaultInfoDTO> getMemberCertificationsPaged(Profile profile,
+                                                                                                    int page,
+                                                                                                    int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(ACQUISITION_DATE).ascending());
         Page<MemberCertification> certifications = memberCertificationRepository.findAllByProfile(profile, pageRequest);
         List<MemberCertificationResponseDTO.DefaultInfoDTO> contents = certifications.getContent().stream()

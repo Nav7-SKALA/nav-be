@@ -37,18 +37,31 @@ public class MemberCertificationController {
     private final CertificationService certificationService;
 
     @Operation(
-            summary = "내 자격증 전체 조회",
+            summary = "내 자격증 전체 조회 - 페이지네이션",
             description = "사용자의 자격증 리스트를 조회합니다."
     )
     @GetMapping("/me/certifications")
-    public ApiResponse<PageResponse<MemberCertificationResponseDTO.DefaultInfoDTO>> getMyCertifications(
+    public ApiResponse<PageResponse<MemberCertificationResponseDTO.DefaultInfoDTO>> getMyCertificationsPaged(
             @ProfileEntity Profile profile,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size
     ) {
         return ApiResponse.onSuccess(
-                memberCertificationService.getMemberCertifications(profile, page, size));
+                memberCertificationService.getMemberCertificationsPaged(profile, page, size));
     }
+
+    @Operation(
+            summary = "내 자격증 전체 조회",
+            description = "사용자의 자격증 리스트를 조회합니다."
+    )
+    @GetMapping("/me/certifications/all")
+    public ApiResponse<List<MemberCertificationResponseDTO.DefaultInfoDTO>> getMyCertifications(
+            @ProfileEntity Profile profile
+    ) {
+        return ApiResponse.onSuccess(
+                memberCertificationService.getMemberCertifications(profile));
+    }
+
 
     @Operation(
             summary = "회원 자격증 생성",
