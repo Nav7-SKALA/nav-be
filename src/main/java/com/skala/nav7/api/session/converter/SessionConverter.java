@@ -43,6 +43,7 @@ public class SessionConverter {
     public static SessionResponseDTO.SessionDetailDTO to(Session session) {
         return SessionResponseDTO.SessionDetailDTO.builder()
                 .sessionId(session.getId())
+                .isTimeOut(session.isTimeOut())
                 .sessionTitle(session.getSessionTitle())
                 .createdAt(session.getCreatedAt())
                 .build();

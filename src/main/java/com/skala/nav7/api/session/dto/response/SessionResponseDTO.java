@@ -36,6 +36,8 @@ public record SessionResponseDTO(
     public record SessionDetailDTO(
             @Schema(description = "세션 ID", example = "3f29bde0-8b79-4f50-a6a2-7e0d3e913437")
             UUID sessionId,
+            @Schema(description = "세션 타임아웃 여부", example = "true")
+            boolean isTimeOut,
             @Schema(description = "세션 제목", example = "커리어 상담")
             String sessionTitle,
             @Schema(description = "세션 생성 시각", example = "2025-05-28T10:00:00")
