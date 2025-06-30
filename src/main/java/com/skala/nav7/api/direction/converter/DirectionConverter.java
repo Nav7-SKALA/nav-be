@@ -8,6 +8,7 @@ public class DirectionConverter {
         return DirectionResponseDTO.DefaultInfoDTO.builder()
                 .directionId(direction.getId())
                 .prompt(direction.getPrompt())
+                .createdAt(direction.getCreatedAt().toLocalDate())
                 .build();
     }
 }
