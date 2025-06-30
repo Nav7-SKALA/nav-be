@@ -73,6 +73,7 @@ public class DummyMemberInitializer {
         if (memberRepository.findById(1L).isEmpty()) {
             initMember();
             Profile profile = initProfile();
+            initAdmin();
             initSession();
             initSessionMessages();
             initRole();
@@ -103,6 +104,21 @@ public class DummyMemberInitializer {
                         .build()
         );
         directionRepository.saveAll(directions);
+    }
+
+    private void initAdmin() {
+        Member admin = Member.builder()
+                .email("admin@naver.com")
+                .gender(Gender.FEMALE)
+                .loginId("admin")
+                .password(passwordEncoder.encode("admin1234"))
+                .memberName("관리자")
+                .build();
+        memberRepository.save(admin);
+        Profile profile = Profile.builder()
+                .member(admin)
+                .build();
+        profileRepository.save(profile);
     }
 
 
