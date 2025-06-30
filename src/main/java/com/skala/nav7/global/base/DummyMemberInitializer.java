@@ -4,6 +4,8 @@ import com.skala.nav7.api.certification.entity.Certification;
 import com.skala.nav7.api.certification.memberCertification.entity.MemberCertification;
 import com.skala.nav7.api.certification.memberCertification.repository.MemberCertificationRepository;
 import com.skala.nav7.api.certification.repository.CertificationRepository;
+import com.skala.nav7.api.direction.entity.Direction;
+import com.skala.nav7.api.direction.repository.DirectionRepository;
 import com.skala.nav7.api.experience.entity.Experience;
 import com.skala.nav7.api.experience.repository.ExperienceRepository;
 import com.skala.nav7.api.member.entity.Gender;
@@ -47,6 +49,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DummyMemberInitializer {
+    private final DirectionRepository directionRepository;
     private final ProjectSkillSetRepository projectSkillSetRepository;
     private final ProjectRoleRepository projectRoleRepository;
     private final DomainRepository domainRepository;
@@ -83,8 +86,25 @@ public class DummyMemberInitializer {
             initProfileSkillSet(profile);
             initProjectRoles(profile);
             initProjectSkillSets(profile);
+            initDirections();
         }
     }
+
+    private void initDirections() {
+        List<Direction> directions = List.of(
+                Direction.builder()
+                        .prompt("SK 그룹은 ESG 경영을 강화하며 지속 가능한 미래 성장을 추구합니다.")
+                        .build(),
+                Direction.builder()
+                        .prompt("SK 그룹은 딥체인지(Deep Change)를 통해 사회적 가치와 경제적 가치를 동시에 창출합니다.")
+                        .build(),
+                Direction.builder()
+                        .prompt("SK 그룹은 구성원의 행복을 중심에 두고 혁신적인 기업문화를 발전시킵니다.")
+                        .build()
+        );
+        directionRepository.saveAll(directions);
+    }
+
 
     private void initMember() {
         Member dummy = Member.builder()
