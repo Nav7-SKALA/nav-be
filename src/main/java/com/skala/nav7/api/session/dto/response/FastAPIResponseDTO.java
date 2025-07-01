@@ -18,8 +18,23 @@ public record FastAPIResponseDTO(
     }
 
     public record RoleModelDTO(
-            Long profileId,
+            Long profile_id,
             double similarity_score
+    ) {
+    }
+
+    public record CareerTitleDTO(
+            String status,
+            Long profile_id,
+            String career_title
+    ) {
+    }
+
+    public record CareerSummaryDTO(
+            String status,
+            Long profile_id,
+            String career_summary,
+            boolean vector_saved
     ) {
     }
 }

@@ -1,16 +1,15 @@
 package com.skala.nav7.api.session.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skala.nav7.api.member.entity.Member;
-import com.skala.nav7.api.profile.entity.Profile;
 import com.skala.nav7.api.profile.repository.ProfileRepository;
 import com.skala.nav7.api.session.converter.SessionConverter;
 import com.skala.nav7.api.session.dto.request.SessionMessageRequestDTO;
 import com.skala.nav7.api.session.dto.request.SessionRequestDTO;
-import com.skala.nav7.api.session.dto.response.FastAPIResponseDTO;
-import com.skala.nav7.api.session.dto.response.FastAPIResponseDTO.RoleModelDTO;
+import com.skala.nav7.api.session.dto.response.PathRecommendDetailedDTO;
 import com.skala.nav7.api.session.dto.response.SessionMessageResponseDTO;
 import com.skala.nav7.api.session.dto.response.SessionResponseDTO;
 import com.skala.nav7.api.session.entity.Session;
@@ -23,10 +22,8 @@ import com.skala.nav7.api.session.repository.SessionMessageRepository;
 import com.skala.nav7.api.session.repository.SessionRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +47,6 @@ public class SessionService {
     private final FastApiClientService fastApiClientService;
     private final MongoTemplate mongoTemplate;
     private final ObjectMapper objectMapper;
-    private final RandomNameCreator nameCreator;
     private static final String _ID = "_id";
     private static final String SESSION_ID = "sessionId";
     private static final String AGENT_ROLE_MODEL = "RoleModel";
@@ -61,6 +57,8 @@ public class SessionService {
     private static final String KEY_RAW = "raw";
     private static final String CAREER_TITLE = "careerTitle";
     private static final String YEARS = "years";
+    private final RandomNameCreator nameCreator;
+
 
     @Transactional
     public void setSessionTimeout(UUID sessionId) {
@@ -83,58 +81,27 @@ public class SessionService {
         return SessionConverter.to(session.getId());
     }
 
-    private HashMap<String, Object> getSessionMessage(Long profileId, String question,
-                                                      String sessionId) {
-        FastAPIResponseDTO response = fastApiClientService.askCareerPath(profileId, question,
-                sessionId);
+    private HashMap<String, Object> getSessionMessage(Long profileId, String question, String sessionId) {
+        PathRecommendDetailedDTO response = fastApiClientService.askCareerPath(profileId, question, sessionId);
 
-        if (!response.content().success()) {
+        if (!response.success()) {
             throw new FastAPIException(FastAPIErrorCode.FAST_API_ERROR);
         }
 
-        String agent = response.content().result().agent();
-        JsonNode textNode = response.content().result().text();
-
-        HashMap<String, Object> map = new HashMap<>();
-
         try {
-            if (AGENT_ROLE_MODEL.equals(agent) && textNode.isArray()) {
-                List<RoleModelDTO> roleModels = objectMapper.readValue(
-                        textNode.toString(),
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, RoleModelDTO.class)
-                );
-                List<Map<String, String>> responseList = new ArrayList<>();
-                for (RoleModelDTO rm : roleModels) {
-                    Map<String, String> roleMap = new HashMap<>();
-                    //todo: error 던지는걸로 수정
-//                    Profile profile = profileRepository.findById(rm.profileId()).orElseThrow(
-//                            () -> new ProfileException(ProfileErrorCode.PROFILE_NOT_FOUND)
-//                    );
-                    Profile profile = profileRepository.findById(rm.profileId())
-                            .orElse(Profile.builder().id(rm.profileId()).careerTitle("프론트엔드 개발자").careerYear(5)
-                                    .build()); //todo: 임시 더미 데이터
-                    roleMap.put(KEY_PROFILE_ID, String.valueOf(rm.profileId()));
-                    roleMap.put(KEY_NAME, nameCreator.create());
-                    roleMap.put(KEY_SCORE, String.valueOf(rm.similarity_score()));
-                    roleMap.put(CAREER_TITLE, profile.getCareerTitle());
-                    roleMap.put(YEARS, String.valueOf(profile.getCareerYear()));
-                    responseList.add(roleMap);
-                }
-                map.put(KEY_RESPONSE, responseList);
-            } else if (textNode.isTextual()) {
-                map.put(KEY_RESPONSE, textNode.asText());
-            } else {
-                map.put(KEY_RAW, textNode.toString()); // fallback
-            }
+            JsonNode resultNode = objectMapper.valueToTree(response.result());
+            HashMap<String, Object> resultMap = objectMapper.convertValue(resultNode, new TypeReference<>() {
+            });
 
             SessionMessage message = SessionMessage.builder()
                     .sessionId(sessionId)
                     .createdAt(LocalDateTime.now())
                     .question(question)
-                    .answer(objectMapper.writeValueAsString(map))
+                    .answer(objectMapper.writeValueAsString(resultMap)) // result만 저장
+                    .summary(response.chat_summary()) // summary에 chat_summary 저장
                     .build();
             sessionMessageRepository.save(message);
-            return map;
+            return resultMap;
         } catch (JsonProcessingException e) {
             throw new FastAPIException(FastAPIErrorCode.RESPONSE_JSON_PARSING_ERROR);
         } catch (Exception e) {
