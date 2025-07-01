@@ -35,6 +35,12 @@ class FastApiClientServiceTest {
     }
 
     @Test
+    void askCareerRoleModel() {
+        PathRecommendDetailedDTO dto = service.askCareerPath(3L, "백엔드 개발자 롤모델 추천해줘.", UUID.randomUUID().toString());
+        System.out.println(dto);
+    }
+
+    @Test
     void askCareerPath() {
         PathRecommendDetailedDTO dto = service.askCareerPath(3L, "백엔드 커리어 경력 어떻게 쌓으면 돼?", UUID.randomUUID().toString());
         System.out.println(dto);

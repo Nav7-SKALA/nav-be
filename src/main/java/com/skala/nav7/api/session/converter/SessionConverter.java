@@ -17,6 +17,13 @@ public class SessionConverter {
                 .build();
     }
 
+    public static SessionResponseDTO.newRoleModelSessionDTO to(UUID sessionId, String roleModelId) {
+        return SessionResponseDTO.newRoleModelSessionDTO.builder()
+                .roleModelId(roleModelId)
+                .sessionId(sessionId)
+                .build();
+    }
+
     public static SessionMessageResponseDTO.newMessageDTO toMessage(UUID sessionId, HashMap<String, Object> map) {
         return SessionMessageResponseDTO.newMessageDTO.builder()
                 .map(map)

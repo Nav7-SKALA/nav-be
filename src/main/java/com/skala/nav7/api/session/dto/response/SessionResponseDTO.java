@@ -9,6 +9,16 @@ import lombok.Builder;
 public record SessionResponseDTO(
 ) {
     @Builder
+    @Schema(description = "롤모델 세션 생성 응답 DTO")
+    public record newRoleModelSessionDTO(
+            @Schema(description = "세션 ID", example = "123")
+            UUID sessionId,
+            @Schema(description = "롤모델 ID", example = "123")
+            String roleModelId
+    ) {
+    }
+
+    @Builder
     @Schema(description = "세션 생성 응답 DTO")
     public record newSessionDTO(
             @Schema(description = "세션 ID", example = "123")

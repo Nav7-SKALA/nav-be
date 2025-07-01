@@ -5,7 +5,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skala.nav7.api.member.entity.Member;
-import com.skala.nav7.api.profile.repository.ProfileRepository;
+import com.skala.nav7.api.rolemodel.entity.RoleModel;
+import com.skala.nav7.api.rolemodel.repository.RoleModelRepository;
 import com.skala.nav7.api.session.converter.SessionConverter;
 import com.skala.nav7.api.session.dto.request.SessionMessageRequestDTO;
 import com.skala.nav7.api.session.dto.request.SessionRequestDTO;
@@ -24,6 +25,7 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,20 +45,14 @@ import org.springframework.stereotype.Service;
 public class SessionService {
     private final SessionRepository sessionRepository;
     private final SessionMessageRepository sessionMessageRepository;
-    private final ProfileRepository profileRepository;
+    private final RoleModelRepository roleModelRepository;
     private final FastApiClientService fastApiClientService;
     private final MongoTemplate mongoTemplate;
     private final ObjectMapper objectMapper;
     private static final String _ID = "_id";
     private static final String SESSION_ID = "sessionId";
-    private static final String AGENT_ROLE_MODEL = "RoleModel";
-    private static final String KEY_PROFILE_ID = "profileId";
-    private static final String KEY_NAME = "name";
-    private static final String KEY_SCORE = "score";
-    private static final String KEY_RESPONSE = "response";
-    private static final String KEY_RAW = "raw";
-    private static final String CAREER_TITLE = "careerTitle";
-    private static final String YEARS = "years";
+    private static final String KEY_ROLE_MODELS = "rolemodels";
+    private static final String ROLE_MODEL = "role_model";
     private final RandomNameCreator nameCreator;
 
 
@@ -75,10 +71,31 @@ public class SessionService {
         return SessionConverter.to(session.getId());
     }
 
-    public SessionResponseDTO.newSessionDTO createNewRoleModelSessions(Member member) {
-        Session session = Session.builder().member(member).sessionTitle("롤모델과의 대화").build();
+    public SessionResponseDTO.newRoleModelSessionDTO createNewRoleModelSessions(SessionRequestDTO.newRoleModelDTO dto,
+                                                                                Member member) {
+        // 세션 생성
+        Session session = Session.builder()
+                .member(member)
+                .sessionTitle("롤모델과의 대화")
+                .build();
         sessionRepository.save(session);
-        return SessionConverter.to(session.getId());
+
+        // JSON 문자열 변환
+        String infoJson;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            infoJson = objectMapper.writeValueAsString(dto);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("롤모델 JSON 변환 실패", e);
+        }
+        RoleModel roleModel = RoleModel.builder()
+                .sessionId(session.getId().toString())
+                .chatSummary("AI가 추천한 롤모델 그룹입니다.") // 예시 문구, 필요시 변경
+                .info(infoJson)
+                .createdAt(LocalDateTime.now())
+                .build();
+        roleModelRepository.save(roleModel);
+        return SessionConverter.to(session.getId(), roleModel.getId());
     }
 
     private HashMap<String, Object> getSessionMessage(Long profileId, String question, String sessionId) {
@@ -89,16 +106,28 @@ public class SessionService {
         }
 
         try {
-            JsonNode resultNode = objectMapper.valueToTree(response.result());
-            HashMap<String, Object> resultMap = objectMapper.convertValue(resultNode, new TypeReference<>() {
-            });
+            HashMap<String, Object> resultMap;
+            if (ROLE_MODEL.equals(response.type())) {
+                JsonNode resultNode = objectMapper.valueToTree(response.result());
+                JsonNode rolemodelsNode = resultNode.get(KEY_ROLE_MODELS);
+
+                resultMap = new HashMap<>();
+                resultMap.put(KEY_ROLE_MODELS, objectMapper.convertValue(
+                        rolemodelsNode,
+                        new TypeReference<List<Map<String, Object>>>() {
+                        })
+                );
+            } else {
+                resultMap = objectMapper.convertValue(response.result(), new TypeReference<>() {
+                });
+            }
 
             SessionMessage message = SessionMessage.builder()
                     .sessionId(sessionId)
                     .createdAt(LocalDateTime.now())
                     .question(question)
-                    .answer(objectMapper.writeValueAsString(resultMap)) // result만 저장
-                    .summary(response.chat_summary()) // summary에 chat_summary 저장
+                    .answer(objectMapper.writeValueAsString(resultMap))
+                    .summary(response.chat_summary())
                     .build();
             sessionMessageRepository.save(message);
             return resultMap;
