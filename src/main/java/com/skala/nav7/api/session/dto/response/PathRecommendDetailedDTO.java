@@ -2,13 +2,14 @@ package com.skala.nav7.api.session.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 
 public record PathRecommendDetailedDTO(
         String user_id,
         String type,
         String chat_summary,
-        PathRecommendResult result,
+        JsonNode result,
         boolean success,
         String error
 ) {
@@ -55,6 +56,26 @@ public record PathRecommendDetailedDTO(
             String job,
             String key_skills,
             String growth_focus
+    ) {
+    }
+
+    public record RoleModelResult(
+            List<RoleModelGroup> rolemodels
+    ) {
+    }
+
+    public record RoleModelGroup(
+            String group_id,
+            String group_name,
+            String current_position,
+            String experience_years,
+            List<String> main_domains,
+            String advice_message,
+            List<String> common_skill_set,
+            List<String> common_career_path,
+            List<String> common_project,
+            List<String> common_experience,
+            List<String> common_cert
     ) {
     }
 }
