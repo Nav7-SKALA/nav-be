@@ -5,7 +5,9 @@ import com.skala.nav7.api.profile.entity.Profile;
 import com.skala.nav7.api.profile.repository.ProfileRepository;
 import com.skala.nav7.api.session.converter.FastAPIRequestConverter;
 import com.skala.nav7.api.session.dto.request.FastAPIRequestDTO;
+import com.skala.nav7.api.session.dto.response.PathRecommendDetailedDTO;
 import jakarta.transaction.Transactional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,12 @@ class FastApiClientServiceTest {
     }
 
     @Test
+    void askCareerPath() {
+        PathRecommendDetailedDTO dto = service.askCareerPath(3L, "백엔드 커리어 경력 어떻게 쌓으면 돼?", UUID.randomUUID().toString());
+        System.out.println(dto);
+    }
+
+    @Test
     @Transactional
     void askCareerTitle() {
         // Given - 실제 DB에서 ID 1L인 프로필 가져오기
@@ -51,6 +59,8 @@ class FastApiClientServiceTest {
         FastAPIRequestDTO.ProfileRequestDTO requestDTO = FastAPIRequestConverter.to(profile);
 
         System.out.println("\n=== FastAPIRequestConverter 변환 결과 ===");
+        System.out.println(service.askCareerSummary(profile));
+        System.out.println(service.askCareerTitle(profile));
         try {
             // JSON으로 예쁘게 출력
             String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestDTO);
