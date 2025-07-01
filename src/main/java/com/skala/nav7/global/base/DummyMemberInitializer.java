@@ -75,7 +75,7 @@ public class DummyMemberInitializer {
             Profile profile = initProfile();
             initAdmin();
             initSession();
-            initSessionMessages();
+//            initSessionMessages();
             initRole();
             initDomain();
             initRoles();
