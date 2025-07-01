@@ -5,6 +5,7 @@ import com.skala.nav7.api.profile.entity.Profile;
 import com.skala.nav7.api.profile.error.ProfileErrorCode;
 import com.skala.nav7.api.profile.error.ProfileException;
 import com.skala.nav7.api.profile.repository.ProfileRepository;
+import com.skala.nav7.api.session.dto.response.FastAPIResponseDTO;
 import com.skala.nav7.api.session.service.FastApiClientService;
 import com.skala.nav7.api.skillset.entity.ProfileSkillSet;
 import com.skala.nav7.api.skillset.entity.SkillSet;
@@ -66,13 +67,15 @@ public class ProfileService {
     }
 
     @Transactional
-    public String getCareers(Profile profile) {
+    public void getCareers(Profile profile) {
         Profile fetchProfile = profileRepository.findProfileWithAllInfo(profile.getId()).orElseThrow(
                 () -> new ProfileException(ProfileErrorCode.PROFILE_NOT_FOUND)
         );
-        String careers = fastApiClientService.askCareerTitle(profile);
-        fetchProfile.editCareerSummary(careers);
-        return careers;
+        FastAPIResponseDTO.CareerTitleDTO careers = fastApiClientService.askCareerTitle(profile);
+        FastAPIResponseDTO.CareerSummaryDTO summary = fastApiClientService.askCareerSummary(profile);
+        fetchProfile.editCareerTitle(careers.career_title());
+        fetchProfile.editCareerSummary(summary.career_summary());
+        profileRepository.save(fetchProfile);
     }
 
 }

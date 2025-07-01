@@ -4,10 +4,10 @@ import com.skala.nav7.api.certification.entity.Certification;
 import com.skala.nav7.api.certification.error.CertificationSuccessCode;
 import com.skala.nav7.api.certification.memberCertification.dto.request.MemberCertificationRequestDTO;
 import com.skala.nav7.api.certification.memberCertification.dto.response.MemberCertificationResponseDTO;
-import com.skala.nav7.api.certification.memberCertification.entity.MemberCertification;
 import com.skala.nav7.api.certification.service.CertificationService;
 import com.skala.nav7.api.certification.service.MemberCertificationService;
 import com.skala.nav7.api.profile.entity.Profile;
+import com.skala.nav7.api.profile.service.ProfileService;
 import com.skala.nav7.global.apiPayload.ApiResponse;
 import com.skala.nav7.global.apiPayload.pagenation.PageResponse;
 import com.skala.nav7.global.auth.jwt.annotation.ProfileEntity;
@@ -35,6 +35,7 @@ public class MemberCertificationController {
 
     private final MemberCertificationService memberCertificationService;
     private final CertificationService certificationService;
+    private final ProfileService profileService;
 
     @Operation(
             summary = "내 자격증 전체 조회 - 페이지네이션",
@@ -72,15 +73,14 @@ public class MemberCertificationController {
             @ProfileEntity Profile profile,
             @Parameter(description = "사용자 자격증 정보") @RequestBody MemberCertificationRequestDTO.CreateCertificationsRequestDTO request
     ) {
-        List<MemberCertification> memberCertifications = request.certifications()
-                .stream()
-                .map(experienceDto -> {
+        request.certifications()
+                .forEach(experienceDto -> {
                     Certification certification = certificationService.getCertification(
                             experienceDto.certificationId());
-                    return memberCertificationService.createNewMemberCertification(profile, experienceDto,
+                    memberCertificationService.createNewMemberCertification(profile, experienceDto,
                             certification);
-                })
-                .toList();
+                });
+        profileService.getCareers(profile);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.onSuccess(CertificationSuccessCode.CERTIFICATION_CREATED));
