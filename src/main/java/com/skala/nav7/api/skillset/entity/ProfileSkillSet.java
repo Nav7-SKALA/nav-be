@@ -28,8 +28,8 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "profile_skill_set")
 public class ProfileSkillSet extends SoftDeletableEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_skill_set_seq")
-    @SequenceGenerator(name = "member_skill_set_seq", sequenceName = "member_skill_set_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "profile_skill_set_seq")
+    @SequenceGenerator(name = "profile_skill_set_seq", sequenceName = "profile_skill_set_seq", allocationSize = 1)
     @Column(name = "profile_skillset_id")
     Long id;
     @ManyToOne(fetch = FetchType.LAZY)

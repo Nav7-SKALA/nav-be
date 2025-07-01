@@ -4,6 +4,7 @@ import com.skala.nav7.api.profile.entity.Profile;
 import com.skala.nav7.api.project.entity.domain.Domain;
 import com.skala.nav7.api.role.entity.ProjectRole;
 import com.skala.nav7.api.skillset.entity.ProjectSkillSet;
+import com.skala.nav7.global.base.entity.SoftDeletableEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,7 +35,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "member_project")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class MemberProject {
+public class MemberProject extends SoftDeletableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_project_seq")

@@ -1,6 +1,7 @@
 package com.skala.nav7.api.role.entity;
 
 import com.skala.nav7.api.project.entity.MemberProject;
+import com.skala.nav7.global.base.entity.SoftDeletableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,7 +26,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "project_role")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProjectRole {
+public class ProjectRole extends SoftDeletableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_role_seq")
     @SequenceGenerator(name = "project_role_seq", sequenceName = "project_role_seq", allocationSize = 1)
