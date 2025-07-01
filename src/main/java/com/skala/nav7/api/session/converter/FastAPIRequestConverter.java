@@ -29,7 +29,6 @@ public class FastAPIRequestConverter {
         return FastAPIRequestDTO.UserInfo.builder()
                 .years(profile.getCareerYear())
                 .profileId(profile.getId())
-                .careerTitle(profile.getCareerTitle())
                 .build();
     }
 
