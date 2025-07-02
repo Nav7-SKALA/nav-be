@@ -50,6 +50,7 @@ public class SessionService {
     private final MongoTemplate mongoTemplate;
     private final ObjectMapper objectMapper;
     private static final String _ID = "_id";
+    private static final String TYPE = "type";
     private static final String SESSION_ID = "sessionId";
     private static final String KEY_ROLE_MODELS = "rolemodels";
     private static final String ROLE_MODEL = "role_model";
@@ -112,6 +113,7 @@ public class SessionService {
                 JsonNode rolemodelsNode = resultNode.get(KEY_ROLE_MODELS);
 
                 resultMap = new HashMap<>();
+                resultMap.put(TYPE, response.type());
                 resultMap.put(KEY_ROLE_MODELS, objectMapper.convertValue(
                         rolemodelsNode,
                         new TypeReference<List<Map<String, Object>>>() {
@@ -120,6 +122,7 @@ public class SessionService {
             } else {
                 resultMap = objectMapper.convertValue(response.result(), new TypeReference<>() {
                 });
+                resultMap.put(TYPE, response.type());
             }
 
             SessionMessage message = SessionMessage.builder()
