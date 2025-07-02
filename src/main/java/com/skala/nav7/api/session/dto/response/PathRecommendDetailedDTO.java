@@ -17,6 +17,7 @@ public record PathRecommendDetailedDTO(
             String similar_text,
             @JsonSetter(nulls = Nulls.AS_EMPTY)
             List<SimilarRoadmap> similar_roadmaps,  // null 또는 빈 배열 가능
+            //todo:image name 추가 
             String text,
             @JsonSetter(nulls = Nulls.AS_EMPTY)
             List<Roadmap> roadmaps                  // null 또는 빈 배열 가능

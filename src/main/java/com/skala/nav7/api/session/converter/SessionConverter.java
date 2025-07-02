@@ -1,12 +1,16 @@
 package com.skala.nav7.api.session.converter;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skala.nav7.api.session.dto.response.SessionMessageResponseDTO;
+import com.skala.nav7.api.session.dto.response.SessionMessageResponseDTO.SessionMessageDTO;
 import com.skala.nav7.api.session.dto.response.SessionResponseDTO;
 import com.skala.nav7.api.session.entity.Session;
 import com.skala.nav7.api.session.entity.SessionMessage;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.data.domain.Slice;
 
@@ -30,20 +34,36 @@ public class SessionConverter {
                 .sessionId(sessionId)
                 .build();
     }
-
+    
     public static SessionMessageResponseDTO.SessionDetailDTO to(Session session,
                                                                 List<SessionMessage> messages, int size) {
         boolean hasNext = messages.size() > size;
         List<SessionMessage> contents = hasNext ? messages.subList(0, size) : messages;
         SessionMessage last = contents.isEmpty() ? null : contents.get(contents.size() - 1);
         String nextMessageId = hasNext && last != null ? last.getId() : null;
+
         return SessionMessageResponseDTO.SessionDetailDTO.builder()
                 .sessionTitle(session.getSessionTitle())
                 .createdAt(session.getCreatedAt())
                 .sessionId(session.getId())
                 .hasNext(hasNext)
                 .nextMessageId(nextMessageId)
-                .messages(contents.stream().map(SessionConverter::to).toList())
+                .messages(contents.stream().map(message -> {
+                    Map<String, Object> answerMap = new HashMap<>();
+                    try {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        answerMap = objectMapper.readValue(message.getAnswer(), new TypeReference<>() {
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    return SessionMessageDTO.builder()
+                            .createdAt(message.getCreatedAt())
+                            .question(message.getQuestion())
+                            .answer(answerMap)
+                            .build();
+                }).toList())
                 .build();
     }
 
@@ -72,8 +92,17 @@ public class SessionConverter {
     }
 
     public static SessionMessageResponseDTO.SessionMessageDTO to(SessionMessage sessionMessage) {
+        Map<String, Object> answerMap = new HashMap<>();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            answerMap = objectMapper.readValue(sessionMessage.getAnswer(), new TypeReference<>() {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return SessionMessageResponseDTO.SessionMessageDTO.builder()
-                .answer(sessionMessage.getAnswer())
+                .answer(answerMap)
                 .question(sessionMessage.getQuestion())
                 .createdAt(sessionMessage.getCreatedAt())
                 .build();
