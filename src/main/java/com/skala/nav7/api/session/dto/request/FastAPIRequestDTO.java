@@ -7,6 +7,19 @@ import lombok.Builder;
 
 public record FastAPIRequestDTO(
 ) {
+    @Builder
+    public record RoleModelQueryRequestDTO(
+            @Schema(description = "사용자 ID (profileId와 동일)", example = "testId123")
+            String user_id,
+            @Schema(description = "사용자가 보낸 질문", example = "백엔드 개발 전문가가 되는 과정 중에 어떤 게 가장 힘드셨나요?")
+            String input_query,
+            @Schema(description = "세션 ID (MongoDB sessionId)", example = "sessionID123")
+            String session_id,
+            @Schema(description = "롤모델 ID (MongoDB roleModelId)", example = "RoleModelID123")
+            String rolemodel_id
+    ) {
+    }
+
     public record CareerPathRequestDTO(
             @Schema(description = "사용자 ID", example = "1")
             String user_id,
