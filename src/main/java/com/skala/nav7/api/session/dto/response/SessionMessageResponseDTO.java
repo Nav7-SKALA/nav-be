@@ -86,6 +86,8 @@ public record SessionMessageResponseDTO(
     public record SessionMessageDTO(
             @Schema(description = "메시지 작성 시각")
             LocalDateTime createdAt,
+            @Schema(description = "대화 TYPE")
+            String type,
             @Schema(description = "질문 내용")
             String question,
             @Schema(description = "AI 답변 내용")

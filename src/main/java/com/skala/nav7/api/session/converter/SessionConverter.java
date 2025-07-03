@@ -105,6 +105,7 @@ public class SessionConverter {
                         }
                     }
                     return SessionMessageDTO.builder()
+                            .type(message.getType())
                             .createdAt(message.getCreatedAt())
                             .question(message.getQuestion())
                             .answer(answerMap)
