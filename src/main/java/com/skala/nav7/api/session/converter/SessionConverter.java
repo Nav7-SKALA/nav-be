@@ -34,7 +34,16 @@ public class SessionConverter {
                 .sessionId(sessionId)
                 .build();
     }
-    
+
+    public static SessionMessageResponseDTO.newRoleModelMessageDTO toMessage(UUID sessionId, String answer,
+                                                                             String roleModelId) {
+        return SessionMessageResponseDTO.newRoleModelMessageDTO.builder()
+                .sessionId(sessionId)
+                .answer(answer)
+                .roleModelId(roleModelId)
+                .build();
+    }
+
     public static SessionMessageResponseDTO.SessionDetailDTO to(Session session,
                                                                 List<SessionMessage> messages, int size) {
         boolean hasNext = messages.size() > size;

@@ -10,6 +10,7 @@ import com.skala.nav7.api.rolemodel.repository.RoleModelRepository;
 import com.skala.nav7.api.session.converter.SessionConverter;
 import com.skala.nav7.api.session.dto.request.SessionMessageRequestDTO;
 import com.skala.nav7.api.session.dto.request.SessionRequestDTO;
+import com.skala.nav7.api.session.dto.response.FastAPIResponseDTO;
 import com.skala.nav7.api.session.dto.response.PathRecommendDetailedDTO;
 import com.skala.nav7.api.session.dto.response.SessionMessageResponseDTO;
 import com.skala.nav7.api.session.dto.response.SessionResponseDTO;
@@ -74,14 +75,12 @@ public class SessionService {
 
     public SessionResponseDTO.newRoleModelSessionDTO createNewRoleModelSessions(SessionRequestDTO.newRoleModelDTO dto,
                                                                                 Member member) {
-        // 세션 생성
         Session session = Session.builder()
                 .member(member)
                 .sessionTitle("롤모델과의 대화")
                 .build();
         sessionRepository.save(session);
 
-        // JSON 문자열 변환
         String infoJson;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -91,11 +90,13 @@ public class SessionService {
         }
         RoleModel roleModel = RoleModel.builder()
                 .sessionId(session.getId().toString())
-                .chatSummary("AI가 추천한 롤모델 그룹입니다.") // 예시 문구, 필요시 변경
+                .chatSummary(dto.advice_message())
                 .info(infoJson)
                 .createdAt(LocalDateTime.now())
                 .build();
         roleModelRepository.save(roleModel);
+        session.setRoleModelId(roleModel.getId());
+        sessionRepository.save(session);
         return SessionConverter.to(session.getId(), roleModel.getId());
     }
 
@@ -148,6 +149,39 @@ public class SessionService {
         } else { // 커서 기반 페이징
             return sessionRepository.findByCursor(member, cursorAt, cursorId,
                     PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdAt", "id")));
+        }
+    }
+
+    public SessionMessageResponseDTO.newRoleModelMessageDTO createNewRoleModelMessage(Member member, UUID sessionId,
+                                                                                      SessionMessageRequestDTO.newMessageDTO dto) {
+        Session session = getSession(sessionId);
+        String answer = getRoleModelMessage(member.getProfile().getId(), dto.question(),
+                String.valueOf(session.getId()),
+                session.getRoleModelId());
+        return SessionConverter.toMessage(session.getId(), answer, session.getRoleModelId());
+    }
+
+    private String getRoleModelMessage(Long profileId, String question, String sessionId,
+                                       String roleModelId) {
+        FastAPIResponseDTO.RoleModelResponseDTO response = fastApiClientService.askRoleModel(profileId, question,
+                sessionId,
+                roleModelId);
+        if (!response.success()) {
+            throw new FastAPIException(FastAPIErrorCode.FAST_API_ERROR);
+        }
+        try {
+            SessionMessage message = SessionMessage.builder()
+                    .sessionId(sessionId)
+                    .createdAt(LocalDateTime.now())
+                    .question(question)
+                    .answer(response.answer())
+                    .summary(response.chat_summary())
+                    .build();
+            sessionMessageRepository.save(message);
+            return response.answer();
+        } catch (Exception e) {
+            log.error("메시지 저장 실패", e);
+            throw e;
         }
     }
 
