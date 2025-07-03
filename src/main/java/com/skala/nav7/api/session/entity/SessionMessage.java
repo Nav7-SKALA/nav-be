@@ -24,5 +24,6 @@ public class SessionMessage {
     LocalDateTime createdAt;
     String question;
     String answer;
+    String type;
     String summary;
 }

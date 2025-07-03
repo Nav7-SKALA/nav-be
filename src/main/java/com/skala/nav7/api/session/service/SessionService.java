@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,7 @@ public class SessionService {
     private static final String SESSION_ID = "sessionId";
     private static final String KEY_ROLE_MODELS = "rolemodels";
     private static final String ROLE_MODEL = "role_model";
+    private static final String ROLE_MODEL_CHAT = "role_model_chat";
     private final RandomNameCreator nameCreator;
 
 
@@ -77,7 +79,7 @@ public class SessionService {
                                                                                 Member member) {
         Session session = Session.builder()
                 .member(member)
-                .sessionTitle("롤모델과의 대화")
+                .sessionTitle(dto.greetingMessage())
                 .build();
         sessionRepository.save(session);
 
@@ -97,6 +99,13 @@ public class SessionService {
         roleModelRepository.save(roleModel);
         session.setRoleModelId(roleModel.getId());
         sessionRepository.save(session);
+        SessionMessage sessionMessage = SessionMessage.builder()
+                .sessionId(session.getId().toString())
+                .type(ROLE_MODEL_CHAT)
+                .createdAt(LocalDateTime.now())
+                .answer(dto.greetingMessage())
+                .build();
+        sessionMessageRepository.save(sessionMessage);
         return SessionConverter.to(session.getId(), roleModel.getId());
     }
 
@@ -114,7 +123,6 @@ public class SessionService {
                 JsonNode rolemodelsNode = resultNode.get(KEY_ROLE_MODELS);
 
                 resultMap = new HashMap<>();
-                resultMap.put(TYPE, response.type());
                 resultMap.put(KEY_ROLE_MODELS, objectMapper.convertValue(
                         rolemodelsNode,
                         new TypeReference<List<Map<String, Object>>>() {
@@ -123,17 +131,19 @@ public class SessionService {
             } else {
                 resultMap = objectMapper.convertValue(response.result(), new TypeReference<>() {
                 });
-                resultMap.put(TYPE, response.type());
             }
 
             SessionMessage message = SessionMessage.builder()
                     .sessionId(sessionId)
                     .createdAt(LocalDateTime.now())
                     .question(question)
+                    .type(response.type())
                     .answer(objectMapper.writeValueAsString(resultMap))
                     .summary(response.chat_summary())
                     .build();
             sessionMessageRepository.save(message);
+
+            resultMap.put(TYPE, response.type());
             return resultMap;
         } catch (JsonProcessingException e) {
             throw new FastAPIException(FastAPIErrorCode.RESPONSE_JSON_PARSING_ERROR);
@@ -158,7 +168,7 @@ public class SessionService {
         String answer = getRoleModelMessage(member.getProfile().getId(), dto.question(),
                 String.valueOf(session.getId()),
                 session.getRoleModelId());
-        return SessionConverter.toMessage(session.getId(), answer, session.getRoleModelId());
+        return SessionConverter.toMessage(session.getId(), answer, session.getRoleModelId(), ROLE_MODEL_CHAT);
     }
 
     private String getRoleModelMessage(Long profileId, String question, String sessionId,
@@ -174,6 +184,7 @@ public class SessionService {
                     .sessionId(sessionId)
                     .createdAt(LocalDateTime.now())
                     .question(question)
+                    .type(ROLE_MODEL_CHAT)
                     .answer(response.answer())
                     .summary(response.chat_summary())
                     .build();
@@ -190,7 +201,9 @@ public class SessionService {
         Session session = getSession(sessionId);
         HashMap<String, Object> map = getSessionMessage(member.getProfile().getId(), dto.question(),
                 String.valueOf(session.getId()));
-        return SessionConverter.toMessage(session.getId(), map);
+        String type = map.get(TYPE).toString();
+        map.remove(TYPE);
+        return SessionConverter.toMessage(session.getId(), map, type);
     }
 
     public SessionMessageResponseDTO.SessionDetailDTO getSessionMessageList(Member member, UUID sessionId,
@@ -206,7 +219,13 @@ public class SessionService {
         query.limit(size + 1);
         List<SessionMessage> messages = mongoTemplate.find(query, SessionMessage.class);
 
-        return SessionConverter.to(session, messages, size);
+        // 롤모델 정보 조회 (세션에 rolemodelId가 있는 경우에만)
+        Optional<RoleModel> roleModel = Optional.empty();
+        if (session.getRoleModelId() != null && !session.getRoleModelId().isEmpty()) {
+            roleModel = roleModelRepository.findById(session.getRoleModelId());
+        }
+
+        return SessionConverter.to(session, messages, size, roleModel);
     }
 
 

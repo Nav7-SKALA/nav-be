@@ -33,33 +33,6 @@ public class SessionController {
     private final SessionService sessionService;
 
     @Operation(
-            summary = "롤모델 Session 생성",
-            description = "롤모델의 카드 생성시, 새로운 세션을 만들 때 사용하는 API 입니다."
-    )
-    @PostMapping(value = "/rolemodels")
-    public ApiResponse<SessionResponseDTO.newRoleModelSessionDTO> createNewRoleModelSession(
-            @RequestBody @Parameter(description = "롤모델 정보") SessionRequestDTO.newRoleModelDTO dto,
-            @MemberEntity Member member
-    ) {
-        return ApiResponse.onSuccess(
-                sessionService.createNewRoleModelSessions(dto, member));
-    }
-
-    @Operation(
-            summary = "롤모델 Session 메세지 생성",
-            description = "롤모델과의 메세지 생성시 사용하는 API 입니다."
-    )
-    @PostMapping(value = "/rolemodels/{sessionId}")
-    public ApiResponse<SessionMessageResponseDTO.newRoleModelMessageDTO> createNewRoleModelSessionMessage(
-            @Parameter(description = "세션의 UUID") @PathVariable UUID sessionId,
-            @MemberEntity Member member,
-            @Parameter(description = "사용자의 질문") @RequestBody SessionMessageRequestDTO.newMessageDTO request
-    ) {
-        return ApiResponse.onSuccess(
-                sessionService.createNewRoleModelMessage(member, sessionId, request));
-    }
-
-    @Operation(
             summary = "Session 생성",
             description = "새로운 세션, 즉 첫 메세지를 보낼 때 사용하는 API 입니다."
     )
@@ -104,8 +77,7 @@ public class SessionController {
         return ApiResponse.onSuccess(SessionConverter.to(
                 sessionService.getSessionList(member, cursorAt, cursorId, size)));
     }
-
-
+    
     @Operation(
             summary = "Session 상세 조회",
             description = "Session History 상세 대화 내용을 커서 기반 페이지네이션으로 조회합니다."

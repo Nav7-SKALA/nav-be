@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum SessionErrorCode implements BaseErrorCode {
+    SESSION_MESSAGE_PARSING_ERROR(HttpStatus.NOT_FOUND, "SESSION_JSON_500", "해당 세션 메세지 Parsing 오류입니다."),
     NOT_HAVE_AUTHORIZATION(HttpStatus.NOT_FOUND, "SESSION_401", "해당 세션에 대한 권한이 존재하지 않습니다."),
     SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "SESSION_404", "해당 세션이 존재하지 않습니다."),
     SESSION_ERROR(HttpStatus.BAD_REQUEST, "SESSION_500", "Session 관련 오류가 발생했습니다.");
