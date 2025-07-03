@@ -9,6 +9,16 @@ import com.skala.nav7.api.session.dto.request.FastAPIRequestDTO.ProjectInfo;
 import java.util.stream.Collectors;
 
 public class FastAPIRequestConverter {
+    public static FastAPIRequestDTO.RoleModelQueryRequestDTO to(Long profileId, String question, String sessionId,
+                                                                String roleModelId) {
+        return FastAPIRequestDTO.RoleModelQueryRequestDTO.builder()
+                .user_id(profileId.toString())
+                .input_query(question)
+                .session_id(sessionId)
+                .rolemodel_id(roleModelId)
+                .build();
+    }
+
     public static FastAPIRequestDTO.ProfileRequestDTO to(Profile profile) {
         return FastAPIRequestDTO.ProfileRequestDTO.builder()
                 .user_id(profile.getId().toString())

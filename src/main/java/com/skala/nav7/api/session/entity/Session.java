@@ -31,12 +31,13 @@ public class Session extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "session_id", nullable = false)
     UUID id;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     Member member;
     @Column(name = "session_title", nullable = false)
     String sessionTitle;
+    @Column(name = "rolemodel_id")
+    String roleModelId;
     @Builder.Default
     @Column(name = "is_timeout", nullable = false)
     private boolean isTimeout = false;
@@ -47,5 +48,9 @@ public class Session extends BaseEntity {
 
     public boolean isTimeOut() {
         return isTimeout;
+    }
+
+    public void setRoleModelId(String roleModelId) {
+        this.roleModelId = roleModelId;
     }
 }

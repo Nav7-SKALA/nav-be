@@ -58,6 +58,22 @@ public class FastApiClientService {
         }
     }
 
+    public FastAPIResponseDTO.RoleModelResponseDTO askRoleModel(Long profileId, String question, String sessionId,
+                                                                String roleModelId) {
+        try {
+            return fastApiWebClient.post()
+                    .uri(ROLE_MODEL_CHAT_URL)
+                    .bodyValue(FastAPIRequestConverter.to(profileId, question, sessionId, roleModelId))
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, this::handleError)
+                    .bodyToMono(FastAPIResponseDTO.RoleModelResponseDTO.class)
+                    .doOnError(e -> log.error("FAST API ERROR: {} ", e.getMessage()))
+                    .block();
+        } catch (Exception e) {
+            throw new FastAPIException(FastAPIErrorCode.FAST_API_ERROR);
+        }
+    }
+
     public FastAPIResponseDTO.CareerTitleDTO askCareerTitle(Profile profile) {
         try {
             return fastApiWebClient.post()
