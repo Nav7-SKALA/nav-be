@@ -101,6 +101,9 @@ public class DummyMemberInitializer {
                         .build(),
                 Direction.builder()
                         .prompt("SK 그룹은 구성원의 행복을 중심에 두고 혁신적인 기업문화를 발전시킵니다.")
+                        .build(),
+                Direction.builder()
+                        .prompt("모든 업무와 프로젝트에 AI를 기본 적용할 줄 아는 AI 기본 역량을 갖춘 사내 구성원")
                         .build()
         );
         directionRepository.saveAll(directions);
