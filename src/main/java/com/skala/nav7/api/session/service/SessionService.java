@@ -82,7 +82,6 @@ public class SessionService {
                 .sessionTitle(dto.greetingMessage())
                 .build();
         sessionRepository.save(session);
-
         String infoJson;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -99,13 +98,6 @@ public class SessionService {
         roleModelRepository.save(roleModel);
         session.setRoleModelId(roleModel.getId());
         sessionRepository.save(session);
-        SessionMessage sessionMessage = SessionMessage.builder()
-                .sessionId(session.getId().toString())
-                .type(ROLE_MODEL_CHAT)
-                .createdAt(LocalDateTime.now())
-                .answer(dto.greetingMessage())
-                .build();
-        sessionMessageRepository.save(sessionMessage);
         return SessionConverter.to(session.getId(), roleModel.getId());
     }
 
