@@ -72,6 +72,8 @@ public record SessionMessageResponseDTO(
             String roleModelId,
             @Schema(description = "인사말", example = "안녕하세요! 저는 시니어 개발자입니다.")
             String greetingMessage,
+            @Schema(description = "롤모델의 그룹 이름", example = "group_2")
+            String group_name,
             @Schema(description = "현재 직책", example = "Senior Software Engineer")
             String current_position,
             @Schema(description = "경력 연수", example = "5년")

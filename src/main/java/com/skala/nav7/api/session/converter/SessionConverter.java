@@ -73,6 +73,7 @@ public class SessionConverter {
 
                     return SessionMessageResponseDTO.RoleModelDTO.builder()
                             .roleModelId(rm.getId())
+                            .group_name(getJsonValue(infoNode, "group_name"))
                             .greetingMessage(getJsonValue(infoNode, "greetingMessage"))
                             .current_position(getJsonValue(infoNode, "current_position"))
                             .experience_years(getJsonValue(infoNode, "experience_years"))
