@@ -91,7 +91,6 @@ public class SessionService {
         }
         RoleModel roleModel = RoleModel.builder()
                 .sessionId(session.getId().toString())
-                .chatSummary(dto.advice_message())
                 .info(infoJson)
                 .createdAt(LocalDateTime.now())
                 .build();

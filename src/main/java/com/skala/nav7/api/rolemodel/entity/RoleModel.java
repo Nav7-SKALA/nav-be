@@ -21,7 +21,6 @@ public class RoleModel {
     @Id
     String id;
     String sessionId;
-    String chatSummary;
     String info;
     LocalDateTime createdAt;
 }
