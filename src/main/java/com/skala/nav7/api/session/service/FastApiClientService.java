@@ -2,7 +2,6 @@ package com.skala.nav7.api.session.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skala.nav7.api.profile.entity.Profile;
 import com.skala.nav7.api.session.converter.FastAPIRequestConverter;
 import com.skala.nav7.api.session.dto.request.FastAPIRequestDTO;
 import com.skala.nav7.api.session.dto.response.FastAPIResponseDTO;
@@ -43,11 +42,11 @@ public class FastApiClientService {
         }
     }
 
-    public FastAPIResponseDTO.CareerSummaryDTO askCareerSummary(Profile profile) {
+    public FastAPIResponseDTO.CareerSummaryDTO askCareerSummary(FastAPIRequestDTO.ProfileRequestDTO dto) {
         try {
             return fastApiWebClient.post()
                     .uri(CAREER_SUMMARY_URL)
-                    .bodyValue(FastAPIRequestConverter.to(profile))
+                    .bodyValue(dto)
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, this::handleError)
                     .bodyToMono(FastAPIResponseDTO.CareerSummaryDTO.class)
@@ -74,11 +73,11 @@ public class FastApiClientService {
         }
     }
 
-    public FastAPIResponseDTO.CareerTitleDTO askCareerTitle(Profile profile) {
+    public FastAPIResponseDTO.CareerTitleDTO askCareerTitle(FastAPIRequestDTO.ProfileRequestDTO dto) {
         try {
             return fastApiWebClient.post()
                     .uri(CAREER_TITLE_URL)
-                    .bodyValue(FastAPIRequestConverter.to(profile))
+                    .bodyValue(dto)
                     .retrieve()
                     .onStatus(HttpStatusCode::isError, this::handleError)
                     .bodyToMono(FastAPIResponseDTO.CareerTitleDTO.class)

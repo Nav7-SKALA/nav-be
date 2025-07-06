@@ -46,10 +46,10 @@ public class Profile extends SoftDeletableEntity {
     Integer careerYear;
     @Column(name = "profile_img")
     String profileImage;
-    @Column(name = "career_title")
-    String careerTitle;
-    @Column(name = "career_summary")
-    String careerSummary;
+    @Column(name = "career_title", length = 255)
+    private String careerTitle;
+    @Column(name = "career_summary", length = 1000)
+    private String careerSummary;
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
     private List<ProfileSkillSet> profileSkillSets = new ArrayList<>();
     @Builder.Default

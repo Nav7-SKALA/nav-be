@@ -11,8 +11,8 @@ public record MemberCertificationRequestDTO() {
             @NotBlank(message = "자격증 아이디를 입력해주세요.")
             @Schema(description = "자격증 아이디", example = "1")
             Long certificationId,
-            @NotBlank(message = "자격증을 습득 년도를 입력해주세요. ")
-            @Schema(description = "자격증 습득 년도", example = "2022-05-01")
+            @NotBlank(message = "자격증을 습득 날짜를 입력해주세요. ")
+            @Schema(description = "자격증 습득 년도, 월", example = "2022-05")
             YearMonth acquisitionDate
     ) {
     }

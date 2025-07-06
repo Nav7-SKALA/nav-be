@@ -4,7 +4,7 @@ import com.skala.nav7.api.certification.converter.CertificationConverter;
 import com.skala.nav7.api.certification.entity.Certification;
 import com.skala.nav7.api.certification.error.CertificationErrorCode;
 import com.skala.nav7.api.certification.error.CertificationException;
-import com.skala.nav7.api.certification.memberCertification.dto.request.MemberCertificationRequestDTO;
+import com.skala.nav7.api.certification.memberCertification.dto.request.MemberCertificationRequestDTO.CreateCertificationDTO;
 import com.skala.nav7.api.certification.memberCertification.dto.response.MemberCertificationResponseDTO;
 import com.skala.nav7.api.certification.memberCertification.entity.MemberCertification;
 import com.skala.nav7.api.certification.memberCertification.repository.MemberCertificationRepository;
@@ -58,9 +58,9 @@ public class MemberCertificationService {
         );
     }
 
-    public MemberCertification createNewMemberCertification(Profile profile,
-                                                            MemberCertificationRequestDTO.CreateCertificationDTO dto,
-                                                            Certification certification) {
+    public void createNewMemberCertification(Profile profile,
+                                             CreateCertificationDTO dto,
+                                             Certification certification) {
         if (memberCertificationRepository.existsByProfileAndCertification(profile, certification)) {
             throw new CertificationException(CertificationErrorCode.ALREADY_EXIST_CERTIFICATION);
         }
@@ -69,7 +69,7 @@ public class MemberCertificationService {
                 .acquisitionDate(dto.acquisitionDate())
                 .profile(profile)
                 .build();
-        return memberCertificationRepository.save(memberCertification);
+        memberCertificationRepository.save(memberCertification);
     }
 
 }

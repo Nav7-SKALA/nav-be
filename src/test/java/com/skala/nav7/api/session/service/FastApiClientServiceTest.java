@@ -65,8 +65,7 @@ class FastApiClientServiceTest {
         FastAPIRequestDTO.ProfileRequestDTO requestDTO = FastAPIRequestConverter.to(profile);
 
         System.out.println("\n=== FastAPIRequestConverter 변환 결과 ===");
-        System.out.println(service.askCareerSummary(profile));
-        System.out.println(service.askCareerTitle(profile));
+
         try {
             // JSON으로 예쁘게 출력
             String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestDTO);

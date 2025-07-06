@@ -11,19 +11,34 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
+    // 1단계: 프로젝트 정보만
     @Query("""
-            select p from Profile p
-            left join fetch p.memberProjects mp
-            left join fetch mp.projectSkillSets ps
-            left join fetch ps.skillSet s
-            left join fetch mp.projectRoles pr
-            left join fetch pr.role r
-            left join fetch p.memberCertifications mc
-            left join fetch mc.certification c
-            left join fetch p.experiences e
-            where p.id = :profileId
+            SELECT p FROM Profile p 
+            LEFT JOIN FETCH p.memberProjects mp 
+            LEFT JOIN FETCH mp.projectSkillSets ps 
+            LEFT JOIN FETCH ps.skillSet s 
+            LEFT JOIN FETCH mp.projectRoles pr 
+            LEFT JOIN FETCH pr.role r 
+            WHERE p.id = :profileId
             """)
-    Optional<Profile> findProfileWithAllInfo(@Param("profileId") Long profileId);
+    Optional<Profile> findProfileWithProjectInfo(@Param("profileId") Long profileId);
+
+    // 2단계: 자격증 정보만
+    @Query("""
+            SELECT p FROM Profile p 
+            LEFT JOIN FETCH p.memberCertifications mc 
+            LEFT JOIN FETCH mc.certification c 
+            WHERE p.id = :profileId
+            """)
+    Optional<Profile> findProfileWithCertifications(@Param("profileId") Long profileId);
+
+    // 3단계: 경험 정보만
+    @Query("""
+            SELECT p FROM Profile p 
+            LEFT JOIN FETCH p.experiences e 
+            WHERE p.id = :profileId
+            """)
+    Optional<Profile> findProfileWithExperiences(@Param("profileId") Long profileId);
 
     Optional<Profile> findByMember(Member member);
 }
