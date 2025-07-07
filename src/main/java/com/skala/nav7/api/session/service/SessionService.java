@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.skala.nav7.api.member.entity.Member;
 import com.skala.nav7.api.rolemodel.entity.RoleModel;
+import com.skala.nav7.api.rolemodel.exception.RoleModelErrorCode;
+import com.skala.nav7.api.rolemodel.exception.RoleModelException;
 import com.skala.nav7.api.rolemodel.repository.RoleModelRepository;
 import com.skala.nav7.api.session.converter.SessionConverter;
 import com.skala.nav7.api.session.dto.request.SessionMessageRequestDTO;
@@ -79,7 +81,7 @@ public class SessionService {
                                                                                 Member member) {
         Session session = Session.builder()
                 .member(member)
-                .sessionTitle(dto.greetingMessage())
+                .sessionTitle(dto.sessionTitle())
                 .build();
         sessionRepository.save(session);
         String infoJson;
@@ -87,7 +89,7 @@ public class SessionService {
             ObjectMapper objectMapper = new ObjectMapper();
             infoJson = objectMapper.writeValueAsString(dto);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("롤모델 JSON 변환 실패", e);
+            throw new RoleModelException(RoleModelErrorCode.ROLE_MODEL_JSON_PARSING_ERROR);
         }
         RoleModel roleModel = RoleModel.builder()
                 .sessionId(session.getId().toString())

@@ -14,6 +14,8 @@ public record SessionRequestDTO(
     }
 
     public record newRoleModelDTO(
+            @NotNull(message = "롤모델 세션의 타이틀을 입력해주세요.")
+            String sessionTitle,
             @NotNull(message = "롤모델의 인사말을 입력해주세요.")
             String greetingMessage,
             @NotNull(message = "롤모델의 그룹 아이디를 입력해주세요.")
