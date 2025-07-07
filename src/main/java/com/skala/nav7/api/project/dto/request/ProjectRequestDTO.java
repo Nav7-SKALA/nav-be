@@ -15,28 +15,21 @@ public record ProjectRequestDTO(
             @NotNull(message = "도메인을 선택해주세요.")
             @Schema(description = "도메인 ID", example = "1")
             Long domainId,
-
             @NotBlank(message = "프로젝트명을 입력해주세요.")
             @Schema(description = "프로젝트명", example = "대학교 학사시스템 구축")
             String projectName,
-
-            @NotBlank(message = "프로젝트 설명을 입력해주세요.")
             @Schema(description = "프로젝트 설명", example = "유통/물류/서비스")
             String projectDescribe,
-
             @NotNull(message = "시작연차를 입력해주세요.")
             @Schema(description = "시작연차", example = "1")
             Integer startYear,
-
             @NotNull(message = "종료연차를 입력해주세요.")
             @Schema(description = "종료연차", example = "3")
             Integer endYear,
-
             @NotNull(message = "프로젝트 규모를 선택해주세요.")
             @Schema(description = "프로젝트 규모", example = "MEDIUM_SMALL",
                     allowableValues = {"NULL", "SMALL", "MEDIUM_SMALL", "MEDIUM", "LARGE", "EXTRA_LARGE"})
             ProjectSize projectSize,
-
             @NotNull(message = "개발자 역할을 선택해주세요.")
             @Size(max = 3, message = "역할은 최대 3개까지만 선택할 수 있습니다.")
             @Schema(description = "담당 역할, 최대 3개까지만 선택할 수 있습니다.", example = "[1,2,3]")
@@ -44,7 +37,6 @@ public record ProjectRequestDTO(
             @Size(max = 4, message = "스킬셋은 최대 4개까지만 선택할 수 있습니다.")
             @Schema(description = "스킬셋 Id 리스트, 최대 4개까지만 선택할 수 있습니다.", example = "[1,2,3]")
             List<Long> skillSetIds,
-
             @Schema(description = "전환점 여부", example = "true")
             Boolean isTurningPoint
     ) {

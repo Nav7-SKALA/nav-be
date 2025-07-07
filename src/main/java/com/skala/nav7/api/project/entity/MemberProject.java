@@ -54,7 +54,7 @@ public class MemberProject extends SoftDeletableEntity {
     @Column(name = "project_name", nullable = false)
     String projectName;
 
-    @Column(name = "project_describe", nullable = false)
+    @Column(name = "project_describe")
     String projectDescribe;
 
     @Column(name = "started_at", nullable = false)
